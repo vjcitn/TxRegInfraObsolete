@@ -10,3 +10,4 @@ License: Artistic-2.0
 LazyLoad: yes 
 biocViews: networks
 VignetteBuilder: knitr
+RoxygenNote: 6.0.1.9000
