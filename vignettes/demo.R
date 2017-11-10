@@ -1,6 +1,7 @@
 
 library(TxRegQuery)
 library(TxRegInfra)
+library(RMongo)
 data(hsFiles)
 mongoColls = mongoSource()
 
@@ -21,6 +22,21 @@ setMethod("show", "txRegMongoFamily", function(object) {
  cat("txRegMongoFamily instance with", nrow(object@meta), "collections\n")
  show(S4Vectors::DataFrame(object@meta))
 })
+
+setClass("txRegMongoDb", representation(con="ANY", dbname="character",
+   host="character", port="numeric", allColl="character"))
+txRegMongoDb = function(dbname, host="127.0.0.1", port=27017) {
+  con = mongoDbConnect(dbName=dbname, host=host, port=port)
+  allColl = dbShowCollections(con)
+  new("txRegMongoDb", dbname=dbname, host=host, port=port, allColl=allColl)
+}
+setMethod("show", "txRegMongoDb", function(object) {
+ cat("txRegMongoDb instance with", length(object@allColl), "collections\n")
+ cat(Biobase::selectSome(object@allColl), "\n")
+})
+
+myTdb = txRegMongoDb(dbname="txregnet")
+
 
 #con = mongo(collection = mycoll2, db = "txregnet")
 
