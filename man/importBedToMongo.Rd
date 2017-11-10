@@ -12,7 +12,7 @@ importBedToMongo(path, collectionName, bedType = "narrowPeak",
 
 \item{collectionName}{name to use in mongodb}
 
-\item{bedType}{one of 'narrowPeak', 'broadPeak', contact developers for other types if desired}
+\item{bedType}{one of 'narrowPeak', 'broadPeak', 'chromHMM': contact developers for other types if desired}
 
 \item{dbname}{mongodb database name, used directly with system("mongoimort ...")}
 
@@ -24,6 +24,8 @@ importBedToMongo(path, collectionName, bedType = "narrowPeak",
 arrange import to mongo using mongoimport, setting up type and fields appropriately
 }
 \examples{
-f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE)[1]
+f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
+f2 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="E096_imp12")
 importBedToMongo(f1, "vjc1", db="txregnet")
+importBedToMongo(f2, "vjc2", db="txregnet")
 }

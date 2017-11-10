@@ -1,7 +1,7 @@
 Package: TxRegInfra
 Title: TxRegInfra
 Description: TxRegInfra
-Version: 0.0.1
+Version: 0.0.2
 Author: Vince Carey
 Suggests: knitr
 Maintainer: VJ Carey <stvjc@channing.harvard.edu>

@@ -15,19 +15,22 @@
   if (type == "narrowPeak") 
     return(paste0(baseFields, ",peak"))
   else if (type == "broadPeak") return(baseFields)
-  else stop("type must be one of 'broadPeak', 'narrowPeak'")
+  else if (type == "chromHMM") return("chrom,chromStart,chromEnd,state")
+  else stop("type must be one of 'broadPeak', 'narrowPeak', 'chromHMM'")
 }
 
 #' arrange import to mongo using mongoimport, setting up type and fields appropriately
 #' @param path path to bed file (not compressed)
 #' @param collectionName name to use in mongodb
-#' @param bedType one of 'narrowPeak', 'broadPeak', contact developers for other types if desired
+#' @param bedType one of 'narrowPeak', 'broadPeak', 'chromHMM': contact developers for other types if desired
 #' @param dbname mongodb database name, used directly with system("mongoimort ...")
 #' @param importCmd how to invoke 'mongoimport', default is to assume it can be found in PATH
 #' @param host host identifier for mongoimport, defaults to 127.0.0.1
 #' @examples
-#' f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE)[1]
+#' f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
+#' f2 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="E096_imp12")
 #' importBedToMongo(f1, "vjc1", db="txregnet")
+#' importBedToMongo(f2, "vjc2", db="txregnet")
 #' @export
 importBedToMongo = function( path, collectionName, 
     bedType="narrowPeak", dbname = "db",
@@ -37,30 +40,3 @@ importBedToMongo = function( path, collectionName,
       fields = .fieldString(type=bedType), dbname=dbname, type="tsv", importCmd=importCmd, host=host )
 }
 
-
-##!/usr/bin/env Rscript
-#auto_import <- function(){
-#  df = read.table(file = "/home/reshg/metadataEncodeDNase1.tsv", sep = '\t', header = TRUE)
-#  for(i in 1:length(df$Assembly)){
-#    #if(lapply(df$Assembly[i], function(x) any(x %in% "hg19")) == TRUE){
-#    if(df$Assembly[i]== "hg19"){       
-#      setwd("/home/reshg/BEDFILES")
-#      #if(lapply(df$File.format[i], function(y) any(y %in% "bed broadPeak")) == TRUE){
-#      if(df$File.format[i] == "bed broadPeak"){   
-#        my_importcmd = paste0("/usr/bin/mongoimport --db txregnet --collection ",df$File.accession[i],"_hg19_HS --type tsv --fields chrom,chromStart,chromEnd,name,score,strand,signalValue,pValue,qValue --file ",df$File.accession[i],".bed")
-#        #system("/usr/bin/mongoimport --db shweta --collection",df$File.accession[i], "--type tsv --fields chrom,chromStart,chromEnd,name,score,strand,signalValue,pValue,qValue --file", df$File.accession[i])
-#        system(my_importcmd)
-#        #my_indexcmd = paste0("db.",df$File.accession[i],"_HS.createIndex({chromStart:1, chromEnd:1})")
-#        #system(my_indexcmd)
-#      }
-#      #else if(lapply(df$File.format[i], function(y) any(y %in% "bed narrowPeak")) == TRUE){
-#      else if(df$File.format[i] == "bed narrowPeak"){ 
-#        my_importcmd = paste0("/usr/bin/mongoimport --db txregnet --collection ",df$File.accession[i],"_hg19_HS --type tsv --fields chrom,chromStart,chromEnd,name,score,strand,signalValue,pValue,qValue,peak --file ",df$File.accession[i],".bed")
-#        system(my_importcmd) 
-#        #my_indexcmd = paste0("db.",df$File.accession[i],"_HS.createIndex({chromStart:1, chromEnd:1})")
-#        #system(my_indexcmd)
-#      }
-#    }
-#  }
-#}
-#auto_import()
