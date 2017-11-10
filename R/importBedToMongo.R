@@ -25,6 +25,9 @@
 #' @param dbname mongodb database name, used directly with system("mongoimort ...")
 #' @param importCmd how to invoke 'mongoimport', default is to assume it can be found in PATH
 #' @param host host identifier for mongoimport, defaults to 127.0.0.1
+#' @examples
+#' f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE)[1]
+#' importBedToMongo(f1, "vjc1", db="txregnet")
 #' @export
 importBedToMongo = function( path, collectionName, 
     bedType="narrowPeak", dbname = "db",

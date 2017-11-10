@@ -23,3 +23,7 @@ importBedToMongo(path, collectionName, bedType = "narrowPeak",
 \description{
 arrange import to mongo using mongoimport, setting up type and fields appropriately
 }
+\examples{
+f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE)[1]
+importBedToMongo(f1, "vjc1", db="txregnet")
+}

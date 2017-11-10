@@ -1,10 +1,9 @@
 Package: TxRegInfra
 Title: TxRegInfra
 Description: TxRegInfra
-Version: 0.0.0
+Version: 0.0.1
 Author: Vince Carey
 Suggests: knitr
-Depends: TxRegQuery, mongolite
 Maintainer: VJ Carey <stvjc@channing.harvard.edu>
 License: Artistic-2.0
 LazyLoad: yes 
