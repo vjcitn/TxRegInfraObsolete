@@ -31,7 +31,7 @@
 #' f2 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="E096_imp12")
 #' chk1 = importBedToMongo(f1, "vjc1", db="txregnet")
 #' stopifnot(chk1)
-#' chk2 = importBedToMongo(f2, "vjc2", db="txregnet")
+#' chk2 = importBedToMongo(f2, "vjc2", db="txregnet", bedType="chromHMM")
 #' stopifnot(chk2)
 #' system('mongo txregnet --eval "db.vjc1.remove({})"') # cleanup
 #' system('mongo txregnet --eval "db.vjc2.remove({})"') # cleanup
@@ -39,7 +39,7 @@
 importBedToMongo = function( path, collectionName, 
     bedType="narrowPeak", dbname = "db",
     importCmd = "mongoimport", host="127.0.0.1" ) {
-    stopifnot(any(bedType %in% c("narrowPeak", "broadPeak")))
+    stopifnot(any(bedType %in% c("narrowPeak", "broadPeak", "chromHMM")))
     .importToMongo( path=path, collectionName=collectionName, 
       fields = .fieldString(type=bedType), dbname=dbname, type="tsv", importCmd=importCmd, host=host )
 }
@@ -52,7 +52,8 @@ importBedToMongo = function( path, collectionName,
 #' @param queryGRange length(1) GRanges instance
 #' @param \dots passed to RMongo::dbGetQuery
 #' @note Note that a default characteristic of RMongo::dbGetQuery is to retrieve 1000 records with parameter \code{limit=1000}.  You can pass alternate
-#' values of this parameter through the ... .
+#' values of this parameter through the ... .  If you do want to use the limit parameter, in dbGetQuery,
+#' you must also specify skip.
 #' @export
 #' @examples
 #' f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")

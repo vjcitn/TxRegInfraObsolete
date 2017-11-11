@@ -1,0 +1,83 @@
+---
+title: "TxRegInfra: support for TxRegQuery"
+author: "Vincent J. Carey, stvjc at channing.harvard.edu"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{TxRegInfra -- classes and methods for TxRegQuery}
+  %\VignetteEncoding{UTF-8}
+output:
+  BiocStyle::pdf_document:
+    toc: yes 
+    number_sections: yes 
+  BiocStyle::html_document:
+    highlight: pygments
+    number_sections: yes 
+    theme: united
+    toc: yes 
+---
+
+```{r setup,echo=FALSE,results="hide"}
+suppressPackageStartupMessages({
+library(TxRegInfra)
+library(GenomicFiles)
+library(RMongo)
+})
+```
+
+# Introduction
+
+TxRegQuery addresses exploration of transcriptional regulatory networks
+by integrating data on eQTL, digital genomic footprinting (DGF), DnaseI
+hypersensitivity binding data (DHS), and transcription
+factor binding site (TFBS) data.  Owing to the volume of emerging tissue-specific
+data, special data modalities are used.
+
+# Managing bed file content with mongodb
+
+## Importing and querying documents
+
+The package comes with a small number of bed files to demonstrate
+import utilities.
+```{r lkk}
+# ENCODE
+f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
+cat(readLines(f1, n=3), sep="\n")
+# ChromHMM
+f2 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="E096_imp12")
+cat(readLines(f2, n=3), sep="\n")
+```
+
+There is a `bedType` parameter that indicates what fields are available; it
+defaults to `broadPeak`.
+
+The following code imports a broadPeak and chromHMM document.
+We deal with metadata about these documents below.
+We assume a database called 'txregnet' has been established
+for a running mongodb server.
+```{r doimp}
+importBedToMongo(f1, "vjc1", db="txregnet")
+importBedToMongo(f2, "vjc2", db="txregnet", bedType="chromHMM")
+```
+
+Now that the documents are imported, we can query for
+information in an interval specified by a GRanges instance.
+```{r doq}
+library(RMongo)
+con = mongoDbConnect("txregnet") # defaults for local server
+queryBedInMongo(con, "vjc1", GRanges("chr1", IRanges(1, 800000)), skip=0, limit=5)
+queryBedInMongo(con, "vjc2", GRanges("chr17", IRanges(1, 800000)), skip=0, limit=5)
+```
+
+## BED file metadata
+
+The BED files are extracted from a few different places.  We have
+metadata on 10 of them:
+```{r lkmeta}
+data(hsFiles)
+
+
+
+
+
+

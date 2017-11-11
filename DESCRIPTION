@@ -1,7 +1,7 @@
 Package: TxRegInfra
 Title: TxRegInfra
 Description: TxRegInfra
-Version: 0.0.3
+Version: 0.0.4
 Author: Vince Carey
 Imports: RMongo, GenomicRanges, rjson
 Suggests: knitr
