@@ -26,6 +26,10 @@ arrange import to mongo using mongoimport, setting up type and fields appropriat
 \examples{
 f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
 f2 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="E096_imp12")
-importBedToMongo(f1, "vjc1", db="txregnet")
-importBedToMongo(f2, "vjc2", db="txregnet")
+chk1 = importBedToMongo(f1, "vjc1", db="txregnet")
+stopifnot(chk1)
+chk2 = importBedToMongo(f2, "vjc2", db="txregnet")
+stopifnot(chk2)
+system('mongo txregnet --eval "db.vjc1.remove({})"') # cleanup
+system('mongo txregnet --eval "db.vjc2.remove({})"') # cleanup
 }

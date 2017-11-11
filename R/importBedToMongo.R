@@ -29,8 +29,12 @@
 #' @examples
 #' f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
 #' f2 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="E096_imp12")
-#' importBedToMongo(f1, "vjc1", db="txregnet")
-#' importBedToMongo(f2, "vjc2", db="txregnet")
+#' chk1 = importBedToMongo(f1, "vjc1", db="txregnet")
+#' stopifnot(chk1)
+#' chk2 = importBedToMongo(f2, "vjc2", db="txregnet")
+#' stopifnot(chk2)
+#' system('mongo txregnet --eval "db.vjc1.remove({})"') # cleanup
+#' system('mongo txregnet --eval "db.vjc2.remove({})"') # cleanup
 #' @export
 importBedToMongo = function( path, collectionName, 
     bedType="narrowPeak", dbname = "db",
@@ -51,11 +55,14 @@ importBedToMongo = function( path, collectionName,
 #' values of this parameter through the ... .
 #' @export
 #' @examples
-#' tt = try(example(importBedToMongo)) # establish vjc1
+#' f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
+#' chk1 = importBedToMongo(f1, "vjc1", db="txregnet")
+#' stopifnot(chk1)
 #' require(RMongo)
 #' con = mongoDbConnect("txregnet")
 #' require(GenomicRanges)
 #' queryBedInMongo(con, "vjc1", GRanges("chr1", IRanges(1, 8e5))) 
+#' system('mongo txregnet --eval "db.vjc1.remove({})"') # cleanup
 queryBedInMongo = function( con, collectionName, queryGRange,
        queryGen = grConverter, ... ) {
     quer = queryGen( queryGRange )

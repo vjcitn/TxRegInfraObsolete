@@ -23,9 +23,12 @@ Note that a default characteristic of RMongo::dbGetQuery is to retrieve 1000 rec
 values of this parameter through the ... .
 }
 \examples{
-tt = try(example(importBedToMongo)) # establish vjc1
+f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
+chk1 = importBedToMongo(f1, "vjc1", db="txregnet")
+stopifnot(chk1)
 require(RMongo)
 con = mongoDbConnect("txregnet")
 require(GenomicRanges)
 queryBedInMongo(con, "vjc1", GRanges("chr1", IRanges(1, 8e5))) 
+system('mongo txregnet --eval "db.vjc1.remove({})"') # cleanup
 }
