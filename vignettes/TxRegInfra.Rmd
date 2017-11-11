@@ -69,12 +69,59 @@ queryBedInMongo(con, "vjc1", GRanges("chr1", IRanges(1, 800000)), skip=0, limit=
 queryBedInMongo(con, "vjc2", GRanges("chr17", IRanges(1, 800000)), skip=0, limit=5)
 ```
 
+# An integrative container
+
+We need to bind the metadata and information about the mongodb.
+
 ## BED file metadata
 
 The BED files are extracted from a few different places.  We have
 metadata on 10 of them:
 ```{r lkmeta}
 data(hsFiles)
+hsFiles[1:3,1:6]
+```
+We added an additional four.  This will become colData for an
+instance of an extended RaggedExperiment class to be defined.
+```{r donew,echo=FALSE}
+library(S4Vectors)
+e072 = data.frame(File.accession = "E072_imp12_mn_trun",
+   File.format = "bed ChromHMM", Output.type = "states", Experiment.accession=NA,
+    Assay = "ChromHMM", Biosample.term.id=NA, 
+    Biosample.term.name="brain inf. temporal lobe",
+    Biosample.type=NA,
+    Biosample.life.stage=NA, Biosample.sex=NA)
+e073 = data.frame(File.accession = "E073_imp12_mn_trun",
+   File.format = "bed ChromHMM", Output.type = "states", Experiment.accession=NA,
+    Assay = "ChromHMM", Biosample.term.id=NA, 
+    Biosample.term.name="brain prefr. cortex",
+    Biosample.type=NA,
+    Biosample.life.stage=NA, Biosample.sex=NA)
+e088 = data.frame(File.accession = "E088_imp12_mn_trun",
+   File.format = "bed ChromHMM", Output.type = "states", Experiment.accession=NA,
+    Assay = "ChromHMM", Biosample.term.id=NA, 
+    Biosample.term.name="fetal lung",
+    Biosample.type=NA,
+    Biosample.life.stage=NA, Biosample.sex=NA)
+e096 = data.frame(File.accession = "E096_imp12_mn_trun",
+   File.format = "bed ChromHMM", Output.type = "states", Experiment.accession=NA,
+    Assay = "ChromHMM", Biosample.term.id=NA, 
+    Biosample.term.name="adult lung",
+    Biosample.type=NA,
+    Biosample.life.stage=NA, Biosample.sex=NA)
+```
+```{r lkcd}
+cd = DataFrame(rbind(hsFiles, rbind(e072, e073, e088, e096)))
+cd[1:4,1:6]
+```
+
+## Extended RaggedExperiment
+
+```
+library(RaggedExperiment)
+setClass("RaggedMongoExpt", contains="RaggedExperiment",
+    representation=representation(dbName="character"))
+```
 
 
 
