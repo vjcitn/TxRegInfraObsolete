@@ -3,6 +3,7 @@ Title: TxRegInfra
 Description: TxRegInfra
 Version: 0.0.2
 Author: Vince Carey
+Imports: RMongo, GenomicRanges, rjson
 Suggests: knitr
 Maintainer: VJ Carey <stvjc@channing.harvard.edu>
 License: Artistic-2.0
