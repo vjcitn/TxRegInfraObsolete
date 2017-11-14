@@ -17,6 +17,11 @@ This is a tech demo of how we can create an object structure for txRegQuery
 
 The primitive is a list containing information about the txRegQuery object
 
+The goal here is to package the data connection details in the resAdapter slot and the resource metadata in the resMeta slot.
+
+For an example, we will use the hsFiles data frame which is a subset of the metadata for the DNAse HS data resources.
+
+
 ```{r lev1}
 setClass(
   Class="txInfraSource",
@@ -114,8 +119,12 @@ txRegRangeQuery<-function(myTxSource, mychr, mystart,myend){
     if(myTxSource@resAdapter[["chrSeqStyle"]]=="ucsc"){mychr=paste0("chr",mychr)}
     mylist=list()
     mylist[[myChrCol]]=mychr;
-    mylist[[myStartCol]]=list("$gte"=mystart)
-    mylist[[myEndCol]]=list("$lte"=myend)
+    if(myStartCol==myEndCol){
+      mylist[[myStartCol]]=list("$gte"=mystart,"$lte"=myend)
+    }else{
+        mylist[[myStartCol]]=list("$gte"=mystart)
+        mylist[[myEndCol]]=list("$lte"=myend)
+    }
     myquery=toJSON(mylist)
     return(mycollection$find(myquery))
     rm(mycollection)
@@ -191,4 +200,28 @@ txRagged<-function(mychr,mystart,myend,mycoll){
 myColl
 myRagged2=txRagged(17,mystart,myend, myColl)
 myRagged2
+```
+
+# Extension to eQTL data
+
+We can use this framework with the eQTL data as well.
+
+```{r eQTL}
+wbEQTL=new(Class="txInfraSource",
+  resName="Whole_Blood_Analysis_v6p_all_snpgene_pairs_eQTL",
+  resType="GTEx eQTL",
+  resOrigin="GTEx version 6",
+  resAdapter=list(type="mongo",
+    location="txregnet",host="localhost",
+    chrCol="snp_chr",
+    startCol="snp_pos",
+    endCol="snp_pos",
+    chrSeqStyle="NCBI",
+    suffix=""
+    ),
+  resMeta=list()
+)
+
+txRegRangeQuery(wbEQTL, 17, mystart, myend)[1:5,]
+
 ```
