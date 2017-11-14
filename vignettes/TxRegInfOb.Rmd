@@ -162,3 +162,33 @@ myRagged=RaggedExperiment(myGList, colData=myColData)
 myRagged
 
 ```
+
+# Functionalize
+
+```{r func}
+txRagged<-function(mychr,mystart,myend,mycoll){
+  myGList=lapply(mycoll@collection, function(x){
+    myChrCol=x@resAdapter[["chrCol"]]
+    myStartCol=x@resAdapter[["startCol"]]
+    myEndCol=x@resAdapter[["endCol"]]
+    res=txRegRangeQuery(x, mychr, mystart, myend)
+    GRanges(res[[myChrCol]], IRanges(res[[myStartCol]], res[[myEndCol]]), mcols=res)
+  })
+
+  #harmonize mcols
+  myvars=unique(unlist(lapply(myGList,function(x){names(mcols(x))})))
+  for(i in 1:length(myGList)){
+    diffvars=setdiff(myvars,names(mcols(myGList[[i]])))
+    if(length(diffvars)>0){mcols(myGList[[i]])[,diffvars]=NA}
+  }
+
+  myColData=do.call(rbind.data.frame,lapply(mycoll@collection, function(x){x@resMeta}))
+  row.names(myColData)=myColData[,1]
+  myRagged=RaggedExperiment(myGList, colData=myColData)
+  myRagged
+}
+
+myColl
+myRagged2=txRagged(17,mystart,myend, myColl)
+myRagged2
+```
