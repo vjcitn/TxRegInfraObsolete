@@ -124,6 +124,17 @@ setClass("RaggedMongoExpt", contains="RaggedExperiment",
 ```
 
 
+## Cleanup
+
+In a multiuser system this could cause problems if someone
+is running examples or building vignette.  May need to
+use munged collection names, perhaps with uuids.
+
+```{r doclean}
+try(system('mongo txregnet --eval "db.vjc1.remove({})"'))
+try(system('mongo txregnet --eval "db.vjc2.remove({})"'))
+```
+
 
 
 

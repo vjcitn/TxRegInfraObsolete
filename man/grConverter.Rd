@@ -2,7 +2,9 @@
 % Please edit documentation in R/importBedToMongo.R
 \name{grConverter}
 \alias{grConverter}
-\title{convert a GRanges instance to JSON suitable for RMongo::dbGetQuery}
+\title{convert a GRanges instance to JSON suitable for RMongo::dbGetQuery
+import GenomeInfoDb
+importFrom GenomicRanges start end}
 \usage{
 grConverter(queryGRange, cfields = c(chrom = "chrom", start = "chromStart",
   end = "chromEnd"))
@@ -14,6 +16,8 @@ grConverter(queryGRange, cfields = c(chrom = "chrom", start = "chromStart",
 }
 \description{
 convert a GRanges instance to JSON suitable for RMongo::dbGetQuery
+import GenomeInfoDb
+importFrom GenomicRanges start end
 }
 \examples{
 require(GenomicRanges)

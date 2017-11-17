@@ -13,6 +13,8 @@ queryBedInMongo(con, collectionName, queryGRange, queryGen = grConverter, ...)
 
 \item{queryGRange}{length(1) GRanges instance}
 
+\item{queryGen}{a function with arguments queryGR and cfields, see \code{\link{grConverter}} for a typical example}
+
 \item{\dots}{passed to RMongo::dbGetQuery}
 }
 \description{
@@ -20,7 +22,8 @@ simple retrieval of documents representing bed ranges
 }
 \note{
 Note that a default characteristic of RMongo::dbGetQuery is to retrieve 1000 records with parameter \code{limit=1000}.  You can pass alternate
-values of this parameter through the ... .
+values of this parameter through the ... .  If you do want to use the limit parameter, in dbGetQuery,
+you must also specify skip.
 }
 \examples{
 f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")

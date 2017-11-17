@@ -50,6 +50,7 @@ importBedToMongo = function( path, collectionName,
 #' @param con RMongo connection
 #' @param collectionName character(1) name of collection
 #' @param queryGRange length(1) GRanges instance
+#' @param queryGen a function with arguments queryGR and cfields, see \code{\link{grConverter}} for a typical example
 #' @param \dots passed to RMongo::dbGetQuery
 #' @note Note that a default characteristic of RMongo::dbGetQuery is to retrieve 1000 records with parameter \code{limit=1000}.  You can pass alternate
 #' values of this parameter through the ... .  If you do want to use the limit parameter, in dbGetQuery,
@@ -71,6 +72,8 @@ queryBedInMongo = function( con, collectionName, queryGRange,
 }
 
 #' convert a GRanges instance to JSON suitable for RMongo::dbGetQuery
+#' import GenomeInfoDb
+#' importFrom GenomicRanges start end
 #' @param queryGRange a length 1 GRanges instance specifying interval within which records are to be retrieved
 #' @param cfields a vector with named elements 'chrom', 'start', 'end' indicating how the JSON components should be named to query fields in the target mongodb document
 #' @examples
