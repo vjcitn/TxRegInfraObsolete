@@ -1,3 +1,4 @@
+#' @importFrom IRanges IRanges
 .importToMongo = function(path, collectionName, fields, dbname = "db",
     type="tsv", importCmd = "mongoimport", host="127.0.0.1") {
   if (type != "tsv") stop("only handling tsv at this time")
@@ -60,9 +61,8 @@ importBedToMongo = function( path, collectionName,
 #' f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
 #' chk1 = importBedToMongo(f1, "vjc1", db="txregnet")
 #' stopifnot(chk1)
-#' require(RMongo)
-#' con = mongoDbConnect("txregnet")
-#' require(GenomicRanges)
+#' con = RMongo::mongoDbConnect("txregnet")
+#' requireNamespace("GenomicRanges")
 #' queryBedInMongo(con, "vjc1", GRanges("chr1", IRanges(1, 8e5))) 
 #' system('mongo txregnet --eval "db.vjc1.remove({})"') # cleanup
 queryBedInMongo = function( con, collectionName, queryGRange,
@@ -72,7 +72,6 @@ queryBedInMongo = function( con, collectionName, queryGRange,
 }
 
 #' convert a GRanges instance to JSON suitable for RMongo::dbGetQuery
-#' import GenomeInfoDb
 #' importFrom GenomicRanges start end
 #' @param queryGRange a length 1 GRanges instance specifying interval within which records are to be retrieved
 #' @param cfields a vector with named elements 'chrom', 'start', 'end' indicating how the JSON components should be named to query fields in the target mongodb document
