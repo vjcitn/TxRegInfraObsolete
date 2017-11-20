@@ -96,23 +96,25 @@ myColl@collection[[1]]
 ```{r methods2 }
 
 setMethod("head", "txInfraSource", function(x) {
-  require(mongolite)
-  my_collection = mongo(collection = paste0(x@resName,x@resAdapter[["suffix"]]),
-    db = x@resAdapter[["location"]]) # connect
-  print(my_collection$find("{}",limit=7))
-  rm(my_collection)
+  require(RMongo)
+  my_collection = paste0(x@resName,x@resAdapter[["suffix"]])
+  db = x@resAdapter[["location"]]
+  mongo <- mongoDbConnect(db, "localhost", 27017)
+  output <- RMongo::dbGetQuery(mongo, my_collection,'{}',0,7)
+  print(output)
+  RMongo::dbDisconnect(mongo)
+  rm(mongo)
 })
 
 head(myColl@collection[[1]])
 
 txRegRangeQuery<-function(myTxSource, mychr, mystart,myend){
-  require(mongolite)
+  require(RMongo)
   require(rjson)
   if(myTxSource@resAdapter[["type"]]=="mongo"){
-    mycollection = mongo(
-      collection = paste0(myTxSource@resName,myTxSource@resAdapter[["suffix"]]),
-      db = myTxSource@resAdapter[["location"]]
-    )
+    my_collection = paste0(myTxSource@resName,myTxSource@resAdapter[["suffix"]])
+    db = myTxSource@resAdapter[["location"]]
+    mongo <- mongoDbConnect(db, "localhost", 27017)
     myChrCol=myTxSource@resAdapter[["chrCol"]]
     myStartCol=myTxSource@resAdapter[["startCol"]]
     myEndCol=myTxSource@resAdapter[["endCol"]]
@@ -126,8 +128,10 @@ txRegRangeQuery<-function(myTxSource, mychr, mystart,myend){
         mylist[[myEndCol]]=list("$lte"=myend)
     }
     myquery=toJSON(mylist)
-    return(mycollection$find(myquery))
-    rm(mycollection)
+    output <- RMongo::dbGetQuery(mongo, my_collection,myquery)
+    RMongo::dbDisconnect(mongo)
+    rm(mongo)
+    return(output)
   }else{cat("Rest not done yet")}
 }
 
@@ -164,7 +168,6 @@ for(i in 1:length(myGList)){
   diffvars=setdiff(myvars,names(mcols(myGList[[i]])))
   if(length(diffvars)>0){mcols(myGList[[i]])[,diffvars]=NA}
   mcols(myGList[[i]])=mcols(myGList[[i]])[,myvars]
-
 }
 
 myColData=do.call(rbind.data.frame,lapply(1:5, function(x){myColl@collection[[x]]@resMeta}))
@@ -192,7 +195,6 @@ txRagged<-function(mychr,mystart,myend,mycoll){
     diffvars=setdiff(myvars,names(mcols(myGList[[i]])))
     if(length(diffvars)>0){mcols(myGList[[i]])[,diffvars]=NA}
     mcols(myGList[[i]])=mcols(myGList[[i]])[,myvars]
-
   }
 
   myColData=do.call(rbind.data.frame,lapply(mycoll@collection, function(x){x@resMeta}))
