@@ -4,9 +4,11 @@
 \alias{listAllCollections}
 \title{list all collections in a database, using command-line interface}
 \usage{
-listAllCollections(db = "test")
+listAllCollections(url = "mongodb://127.0.0.1:27017", db = "test")
 }
 \arguments{
+\item{url}{character(1) mongodb URL}
+
 \item{db}{character(1) mongodb database name}
 }
 \description{

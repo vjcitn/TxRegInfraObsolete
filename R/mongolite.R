@@ -9,18 +9,19 @@
 #' @export
 verifyRunningMongodb = function(url="mongodb://127.0.0.1") {
   requireNamespace("mongolite")
-  ans = try(mongo())
-  class(ans)[1] == "mongo"
+  ans = try(mongo(url=url))
+  class(ans)[1] == "mongo" # will return FALSE if try results in try-error
 }
 
 #' list all collections in a database, using command-line interface
+#' @param url character(1) mongodb URL
 #' @param db character(1) mongodb database name
 #' @examples
 #' if (verifyRunningMongodb()) listAllCollections()
 #' @export
-listAllCollections = function(db="test") {
-   lis = system(sprintf("mongo %s --eval 'db.getCollectionNames()'",
-                  db), intern=TRUE)
+listAllCollections = function(url="mongodb://127.0.0.1:27017", db="test") {
+   lis = system(sprintf("mongo %s/%s --eval 'db.getCollectionNames()'",
+                  url, db), intern=TRUE)
     rjson::fromJSON(paste0(lis[-c(1:3)], collapse=""))
 }
 
