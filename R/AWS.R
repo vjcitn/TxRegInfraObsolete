@@ -13,5 +13,7 @@ URL_txregInAWS = function()
 #' }
 #' @export
 txregRemote = function(...) {
- mongo(db="txregnet", url=URL_txregInAWS(), ...)
+ url=URL_txregInAWS()
+ new("mongoliteCon", con=mongo(db="txregnet", url=url, ...), url=url, 
+     db="txregnet")
 }

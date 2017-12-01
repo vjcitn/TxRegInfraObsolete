@@ -5,7 +5,10 @@
        queryGen = grConverter, ... ) {
     quer = queryGen( queryGRange )
     if (is(con, "RMongo")) return(RMongo::dbGetQuery(con, collectionName, quer, ... ))
-    else if (is(con, "mongoliteCon")) return( con@con$find( quer ) )
+    else if (is(con, "mongoliteCon")) {
+       conForCollection = mongo(url=con@url, db=con@db, coll=collectionName)
+       return( conForCollection$find( quer ) )
+       }
     else stop("con must be of class RMongo or mongoliteCon")
 }
 

@@ -27,10 +27,11 @@ listAllCollections = function(url="mongodb://127.0.0.1:27017", db="test") {
 
 setOldClass("mongo")
 setClass("mongoliteCon", representation(con="mongo", db="character",
-    collection="ANY"))
+    collection="ANY", url="character"))
 setMethod("show", "mongoliteCon", function(object) {
  cat(sprintf("mongolite connection for db %s, coll. %s\n", object@db,
     object@collection))
+ cat("URL: ", object@url, "\n")
 })
 #' constructor for S4 representation of mongolite dbconnection
 #' @param url character(1) mongodb reference
@@ -44,5 +45,5 @@ setMethod("show", "mongoliteCon", function(object) {
 #' @export
 mongoliteCon = function(url, db, collection="test") {
  con = mongo(url=url, db=db, collection=collection)
- new("mongoliteCon", con=con, db=db, collection=collection)
+ new("mongoliteCon", con=con, db=db, collection=collection, url=url)
 }

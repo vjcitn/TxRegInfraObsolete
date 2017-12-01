@@ -48,6 +48,8 @@ f2 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="E096_im
 cat(readLines(f2, n=3), sep="\n")
 ```
 
+The function `importBedToMongo` uses system() to run
+mongodb.
 There is a `bedType` parameter that indicates what fields are available; it
 defaults to `broadPeak`.
 
@@ -78,7 +80,7 @@ We need to bind the metadata and information about the mongodb.
 The BED files are extracted from a few different places.  We have
 metadata on 10 of them:
 ```{r lkmeta}
-data(hsFiles)
+data(hsFiles_subset) # holds hsFiles
 hsFiles[1:3,1:6]
 ```
 We added an additional four.  This will become colData for an
@@ -117,54 +119,43 @@ cd[1:4,1:6]
 
 ## Extended RaggedExperiment
 
-```{r lk1}
-library(RaggedExperiment)
-setClass("RaggedMongoExpt", contains="RaggedExperiment",
-    representation=representation(dbName="character"))
-# Constructor
-RaggedMongoExpt = function( dbName, colData=DataFrame()) {
-   nsamp = nrow(colData)
-#
-# looks like you must use dummy GRanges or they will be dropped
-#
-   if (nsamp > 0) {
-        dum = GRanges("chr0", IRanges(2,1))
-        initass =  GRangesList(lapply(1:nsamp, function(x) dum))
-        names(initass) = rownames(colData)
-        }
-   else initass = GRangesList()
-   ans = RaggedExperiment(initass, colData=colData)
-   rownames(ans) = rownames(colData)
-   ans = new("RaggedMongoExpt", ans, dbName=dbName)
-   ans
-}
+```{r domor1}
 okdf = DataFrame(hsFiles)
 rownames(okdf) = hsFiles[,1]
-rme1 = RaggedMongoExpt(dbName="txregnet", colData=okdf)
+loccon = localMongolite(db="txregnet")
+rme1 = RaggedMongoExpt(loccon, colData=okdf)
 rme1
-#> a1 = queryBedInMongo(con, "vjc1", GRanges("chr1", IRanges(1, 8e5)))
-#> GRanges(a1$chrom, IRanges(a1$chromStart, a1$chromEnd))
+```
 
-.subsetByOv = function(x, ranges, maxgap = -1L, minoverlap = 0L, type = c("any", 
-    "start", "end", "within", "equal"), invert = FALSE, ...) {
-    con = mongoDbConnect(x@dbName) # defaults for local server
-    collnames = rownames(colData(x))
-    ncoll = length(collnames)
-    dfs = lapply(1:length(collnames), function(i) queryBedInMongo(con, collnames[i],
-                     ranges))
-    names(dfs) = collnames
-    dfs
-}
-
-
-allst = .subsetByOv(rme1[,c(2,4,5)], GRanges("chr1", IRanges(1,8e5))) 
+```{r ccc}
+badn = c("seqnames", "ranges", "strand", "seqlevels", "seqlengths", "isCircular", "start", "end", "width", "element")
+cleanCols = function(x) setdiff(colnames(x), badn)
+allst = subsetByOverlaps(rme1[,c(2,4,5)], GRanges("chr1", IRanges(1,8e5))) 
 grl = GRangesList(lapply(allst, function(x) {
-     ans = GRanges(x$chrom, IRanges(x$chromStart, x$chromEnd)); mcols(ans) = x[,-4]; ans
+     ans = GRanges(x$chrom, IRanges(x$chromStart, x$chromEnd)); mcols(ans) = x[,cleanCols(x)]; ans
      }))
 re = RaggedExperiment(grl, colData=colData(rme1[,c(2,4,5)])) 
 dim(sparseAssay(re))
 dim(compactAssay(re))
+```
 
+# Working with a large TxRegNet corpus
+
+Need to be able to generate appropriate query for
+document type.
+
+```{r lklarge}
+txr = try(txregRemote())
+data(harmMatch)
+harmMatch = DataFrame(harmMatch)
+if (!inherits(txr, "try-error")) {
+myc2 = harmMatch[grep("HS$", rownames(harmMatch)),]
+rme2 = RaggedMongoExpt(con=txr, colData=myc2[1:20,])
+rme2
+ss = subsetByOverlaps(rme2, GRanges("chr10", IRanges(1, 1e6)))
+summary(sapply(ss, nrow))
+# now convert this to GRangesList and then RaggedExperiment
+}
 ```
 
 
