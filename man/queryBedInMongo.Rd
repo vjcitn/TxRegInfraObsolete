@@ -29,11 +29,21 @@ values of this parameter through the ... .  If you do want to use the limit para
 you must also specify skip.
 }
 \examples{
-f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
-chk1 = importBedToMongo(f1, "vjc1", db="txregnet")
-stopifnot(chk1)
-con = RMongo::mongoDbConnect("txregnet")
-requireNamespace("GenomicRanges")
-queryBedInMongo(con, "vjc1", GRanges("chr1", IRanges(1, 8e5))) 
-system('mongo txregnet --eval "db.vjc1.remove({})"') # cleanup
+if (interactive()) {
+ if (verifyRunningMongodb()) {
+   f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
+   chk1 = importBedToMongo(f1, "vjc1", db="test")
+   stopifnot(chk1)
+   con = RMongo::mongoDbConnect("test")
+   requireNamespace("GenomicRanges")
+   print(queryBedInMongo(con, "vjc1", GRanges("chr1", IRanges(1, 8e5))) )
+   mlcon = mongoliteCon(url="mongodb://127.0.0.1",
+               db="test", collection="vjc1")
+   print(queryBedInMongo(mlcon, "vjc1", GRanges("chr1", IRanges(1, 8e5))) )
+   rm(mlcon)
+   system('mongo test --eval "db.vjc1.remove({})"') # cleanup
+     } else {
+     cat("could not find running mongodb, try 'mongod' in shell.\\n")
+     }
+}
 }

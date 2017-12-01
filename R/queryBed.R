@@ -4,7 +4,9 @@
 .queryBedInMongoRMongo = function( con, collectionName, queryGRange,
        queryGen = grConverter, ... ) {
     quer = queryGen( queryGRange )
-    RMongo::dbGetQuery(con, collectionName, quer, ... )
+    if (is(con, "RMongo")) return(RMongo::dbGetQuery(con, collectionName, quer, ... ))
+    else if (is(con, "mongoliteCon")) return( con@con$find( quer ) )
+    else stop("con must be of class RMongo or mongoliteCon")
 }
 
 setGeneric("queryBedInMongo", function( con, collectionName, queryGRange,
@@ -25,19 +27,37 @@ setGeneric("queryBedInMongo", function( con, collectionName, queryGRange,
 #' @aliases queryBedInMongo
 #' @exportMethod queryBedInMongo
 #' @examples
-#' f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
-#' chk1 = importBedToMongo(f1, "vjc1", db="txregnet")
-#' stopifnot(chk1)
-#' con = RMongo::mongoDbConnect("txregnet")
-#' requireNamespace("GenomicRanges")
-#' queryBedInMongo(con, "vjc1", GRanges("chr1", IRanges(1, 8e5))) 
-#' system('mongo txregnet --eval "db.vjc1.remove({})"') # cleanup
+#' if (interactive()) {
+#'  if (verifyRunningMongodb()) {
+#'    f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
+#'    chk1 = importBedToMongo(f1, "vjc1", db="test")
+#'    stopifnot(chk1)
+#'    con = RMongo::mongoDbConnect("test")
+#'    requireNamespace("GenomicRanges")
+#'    print(queryBedInMongo(con, "vjc1", GRanges("chr1", IRanges(1, 8e5))) )
+#'    mlcon = mongoliteCon(url="mongodb://127.0.0.1",
+#'                db="test", collection="vjc1")
+#'    print(queryBedInMongo(mlcon, "vjc1", GRanges("chr1", IRanges(1, 8e5))) )
+#'    rm(mlcon)
+#'    system('mongo test --eval "db.vjc1.remove({})"') # cleanup
+#'      } else {
+#'      cat("could not find running mongodb, try 'mongod' in shell.\n")
+#'      }
+#' }
 setMethod("queryBedInMongo", 
     c("RMongo", "character", "GRanges", "function"), 
     function( con, collectionName, queryGRange, queryGen, ...) {
     .queryBedInMongoRMongo( con, collectionName, queryGRange, queryGen, ...)})
 setMethod("queryBedInMongo", 
     c("RMongo", "character", "GRanges", "missing"), 
+    function( con, collectionName, queryGRange, queryGen, ...) {
+    .queryBedInMongoRMongo( con, collectionName, queryGRange, grConverter, ...)})
+setMethod("queryBedInMongo", 
+    c("mongoliteCon", "character", "GRanges", "function"), 
+    function( con, collectionName, queryGRange, queryGen, ...) {
+    .queryBedInMongoRMongo( con, collectionName, queryGRange, queryGen, ...)})
+setMethod("queryBedInMongo", 
+    c("mongoliteCon", "character", "GRanges", "missing"), 
     function( con, collectionName, queryGRange, queryGen, ...) {
     .queryBedInMongoRMongo( con, collectionName, queryGRange, grConverter, ...)})
 
