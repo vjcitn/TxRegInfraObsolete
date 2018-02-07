@@ -18,7 +18,8 @@ constructor for S4 representation of mongolite dbconnection
 }
 \examples{
 if (interactive()) {
-   tcon = mongoliteCon(url=URL_txregInAWS(), db="txregnet", collection="CD14_DS17215_hg19_FP")
+   tcon = mongoliteCon(url=URL_txregInAWS(), db="txregnet", 
+         collection="CD14_DS17215_hg19_FP")
    tcon
 }
 }

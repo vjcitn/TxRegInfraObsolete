@@ -39,7 +39,8 @@ setMethod("show", "mongoliteCon", function(object) {
 #' @param collection character(1) collection for queries
 #' @examples
 #' if (interactive()) {
-#'    tcon = mongoliteCon(url=URL_txregInAWS(), db="txregnet", collection="CD14_DS17215_hg19_FP")
+#'    tcon = mongoliteCon(url=URL_txregInAWS(), db="txregnet", 
+#'          collection="CD14_DS17215_hg19_FP")
 #'    tcon
 #' }
 #' @export
@@ -47,3 +48,4 @@ mongoliteCon = function(url, db, collection="test") {
  con = mongo(url=url, db=db, collection=collection)
  new("mongoliteCon", con=con, db=db, collection=collection, url=url)
 }
+

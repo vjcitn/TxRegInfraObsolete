@@ -150,7 +150,7 @@ data(harmMatch)
 harmMatch = DataFrame(harmMatch)
 if (!inherits(txr, "try-error")) {
 myc2 = harmMatch[grep("HS$", rownames(harmMatch)),]
-rme2 = RaggedMongoExpt(con=txr, colData=myc2[1:20,])
+rme2 = RaggedMongoExpt(con=txr, colData=myc2[1:200,])
 rme2
 ss = subsetByOverlaps(rme2, GRanges("chr10", IRanges(1, 1e6)))
 summary(sapply(ss, nrow))
