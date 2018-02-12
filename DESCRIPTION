@@ -2,10 +2,10 @@ Package: TxRegInfra
 Title: TxRegInfra
 Description: Define infrastructure for mongo-based transcriptional 
 	regulatory network creation.
-Version: 0.0.15
+Version: 0.0.18
 Author: Vince Carey
 Depends: RaggedExperiment (>= 1.3.11), mongolite
-Imports: RMongo, rjson, GenomicRanges, IRanges
+Imports: RMongo, rjson, GenomicRanges, IRanges, BiocParallel
 Suggests: knitr, GenomicFiles, S4Vectors
 Maintainer: VJ Carey <stvjc@channing.harvard.edu>
 License: Artistic-2.0

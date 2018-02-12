@@ -2,6 +2,7 @@
 # we'll assume all access is through mongolite
 
 #' list collections in AWS mongo server for txregnet
+#' @import rjson
 #' @param ignore integer vector telling which lines of mongo db.getCollectionNames() result should be ignored
 #' @param url a valid mongodb URL
 #' @param db character(1) db name
@@ -110,11 +111,14 @@ grConverter = function(queryGRange,
     stopifnot(length(queryGRange)==1)
     stopifnot(all(names(cfields)==c("chrom", "start", "end")))
 # lis has provisional names which will be replaced
-    lis = list(chr=as.character(seqnames(queryGRange)),
+    ss = as.character(seqnames(queryGRange))
+    g = grep("chr", ss)  # assume mongo will use integer if NCBI annotation used, ignoring M for now
+    if (length(g)==0) ss=as.integer(ss)
+    lis = list(chr=ss,
                  chromStart=c("$gte"=start(queryGRange)),
                  chromEnd=c("$lte"=end(queryGRange)))
     names(lis) = cfields
-    toJSON(lis)
+    rjson::toJSON(lis) # bplapply cannot find without ::
 }
 
 bannedColnames = function() c("seqnames", "ranges", "strand", 
@@ -205,6 +209,7 @@ makeGRConverterList = function(rme, map=basicCfieldsMap(),
 }
 
 #' prototype of subsetter for mongo resource
+#' @importFrom BiocParallel bplapply
 #' @param rme RaggedMongoExpt instance
 #' @param gr GRanges instance to subset by
 #' @param map list with one element per document type telling what fields are chr, start, stop
@@ -213,7 +218,7 @@ makeGRConverterList = function(rme, map=basicCfieldsMap(),
 #' requireNamespace("mongolite")
 #' m1 = mongolite::mongo(url=URL_txregInAWS(), db="txregnet")
 #' cd = makeColData(url=URL_txregInAWS(), db="txregnet")
-#' rme1 = RaggedMongoExpt(m1, cd[which(cd$type=="FP"),][1:4,])
+#' rme1 = RaggedMongoExpt(m1, cd[which(cd$type=="FP"),][1:8,])
 #' ss = sbov(rme1, GRanges("chr1", IRanges(1e6, 1.5e6)))
 #' @export
 sbov = function(rme, gr, map=basicCfieldsMap(), docTypeName="type") {
@@ -224,7 +229,7 @@ sbov = function(rme, gr, map=basicCfieldsMap(), docTypeName="type") {
   convs = makeGRConverterList(rme=rme, map=map, docTypeName=docTypeName)
   cd = colData(rme)
   allcols = rownames(cd)
-  content = lapply(seq_len(length(allcols)), function(x) {
+  content = bplapply(seq_len(length(allcols)), function(x) {
      cat(".")
      ty = cd[[docTypeName]][x]
      conn = mongo(url=theurl, db=thedb, collection=
@@ -247,10 +252,6 @@ sbov = function(rme, gr, map=basicCfieldsMap(), docTypeName="type") {
     cd = cd[-dr,]
     }
   names(content) = rownames(cd)
-#  assaygr = lapply(content, function(x) rep(gr, nrow(x)))
-#  for (i in seq_len(length(assaygr)))
-#     # you need to get the content into the GRanges ... then maybe make MultiAssayExperiment?
-#     mcols(assaygr[[i]]) = content[[i]]
-  list( assay=content, colData=cd )
+  RaggedExperiment( assay=GRangesList(content), colData=cd )
 }
 

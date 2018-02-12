@@ -22,6 +22,6 @@ prototype of subsetter for mongo resource
 requireNamespace("mongolite")
 m1 = mongolite::mongo(url=URL_txregInAWS(), db="txregnet")
 cd = makeColData(url=URL_txregInAWS(), db="txregnet")
-rme1 = RaggedMongoExpt(m1, cd[which(cd$type=="FP"),][1:4,])
+rme1 = RaggedMongoExpt(m1, cd[which(cd$type=="FP"),][1:8,])
 ss = sbov(rme1, GRanges("chr1", IRanges(1e6, 1.5e6)))
 }
