@@ -17,3 +17,8 @@ txregRemote = function(...) {
  new("mongoliteCon", con=mongo(db="txregnet", url=url, ...), url=url, 
      db="txregnet")
 }
+
+#' local mongodb txregnet
+#' @export
+URL_txregLocal = function()
+  "mongodb://127.0.0.1:27017"
