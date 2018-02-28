@@ -70,6 +70,8 @@ We focus on `r CRANpkg("mongolite")` as the interface.
 suppressPackageStartupMessages({
 library(TxRegInfra)
 library(mongolite)
+library(Gviz)
+library(EnsDb.Hsapiens.v75)
 })
 con1 = mongo(url=URL_txregInAWS(), db="txregnet")
 con1
@@ -115,14 +117,28 @@ rme1 = rme0[, which(cd$type=="FP")]
 
 A key method in development is subsetting the archive by genomic coordinates.
 
-```{r lksb}
-s1 = sbov(rme1, GRanges("chr17", IRanges(38e6,38.4e6)))
+```{r lksb, cache=TRUE}
+s1 = sbov(rme1, GRanges("chr17", IRanges(38e6,38.1e6)))
 s1
-dim(ca <- compactAssay(s1, 3))
+dim(ca <- sparseAssay(s1, 3))  # compact gives stack overflow
 head(ca[,c(7,18)])
 ```
 
 # Visualizing coincidence
+
+```{r mym}
+ormm = txmodels("ORMDL3", plot=FALSE)
+car = strsplit(rownames(ca), ":|-")
+an = as.numeric
+gr = GRanges(ormm@chromosome, IRanges(an(sapply(car,"[", 2)), an(sapply(car,"[", 3))))
+gr1 = gr
+gr1$score = ca[,1]
+gr2 = gr
+gr2$score = ca[,2]
+sc1 = DataTrack(gr1)
+sc2 = DataTrack(gr2)
+plotTracks(list(GenomeAxisTrack(), sc1, sc2, ormm), showId=TRUE)
+```
 
 
 
