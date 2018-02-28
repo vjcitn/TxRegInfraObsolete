@@ -35,141 +35,94 @@ data, special data modalities are used.
 
 # Managing bed file content with mongodb
 
-## Importing and querying documents
+## Importing documents
 
-The package comes with a small number of bed files to demonstrate
-import utilities.
-```{r lkk}
-# ENCODE
-f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
-cat(readLines(f1, n=3), sep="\n")
-# ChromHMM
-f2 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="E096_imp12")
-cat(readLines(f2, n=3), sep="\n")
+Given a working MongoDb distribution with the command line
+utility `mongoimport`, the following function can be used
+to import a document formatted with tab-separated values.
+This should be made more general.
+
+```
+> TxRegInfra:::.importToMongo
+function (path, collectionName, fields, dbname = "db", type = "tsv", 
+    importCmd = "mongoimport", host = "127.0.0.1") 
+{
+    if (type != "tsv") 
+        stop("only handling tsv at this time")
+    cmd = paste0(importCmd, " --host ", host, " --db ", dbname, 
+        " --collection ", collectionName, " --type ", type, " --fields ", 
+        fields, "  --file ", path)
+    chk = try(system(cmd, intern = TRUE))
+    if (inherits(chk, "try-error")) 
+        return(chk)
+    TRUE
+}
 ```
 
-The function `importBedToMongo` uses system() to run
-mongodb.
-There is a `bedType` parameter that indicates what fields are available; it
-defaults to `broadPeak`.
+## Querying the `txregnet` database
 
-The following code imports a broadPeak and chromHMM document.
-We deal with metadata about these documents below.
-We assume a database called 'txregnet' has been established
-for a running mongodb server.
-```{r doimp}
-importBedToMongo(f1, "vjc1", db="txregnet")
-importBedToMongo(f2, "vjc2", db="txregnet", bedType="chromHMM")
+We have a long-running server that will respond to queries.
+We focus on `r CRANpkg("mongolite")` as the interface.
+
+### The connection 
+
+```{r lkmong}
+suppressPackageStartupMessages({
+library(TxRegInfra)
+library(mongolite)
+})
+con1 = mongo(url=URL_txregInAWS(), db="txregnet")
+con1
+```
+We will write methods that work with the 'fields' of this object.
+
+There is not much explicit reflectance in the mongolite API.
+The following is improvised and may be fragile:
+```{r lkpar}
+parent.env(con1)$orig
 ```
 
-Now that the documents are imported, we can query for
-information in an interval specified by a GRanges instance.
-```{r doq}
-library(RMongo)
-con = mongoDbConnect("txregnet") # defaults for local server
-queryBedInMongo(con, "vjc1", GRanges("chr1", IRanges(1, 800000)), skip=0, limit=5)
-queryBedInMongo(con, "vjc2", GRanges("chr17", IRanges(1, 800000)), skip=0, limit=5)
+We can get a list of collections in the database:
+```{r getl}
+head(c1 <- listAllCollections(url=URL_txregInAWS(), db="txregnet"))
+```
+
+We can get a record from a given collection:
+```{r getl2}
+mongo(url=URL_txregInAWS(), db="txregnet", collection=c1[1])
 ```
 
 # An integrative container
 
 We need to bind the metadata and information about the mongodb.
 
-## BED file metadata
+## Sample metadata
 
-The BED files are extracted from a few different places.  We have
-metadata on 10 of them:
-```{r lkmeta}
-data(hsFiles_subset) # holds hsFiles
-hsFiles[1:3,1:6]
-```
-We added an additional four.  This will become colData for an
-instance of an extended RaggedExperiment class to be defined.
-```{r donew,echo=FALSE}
-library(S4Vectors)
-e072 = data.frame(File.accession = "E072_imp12_mn_trun",
-   File.format = "bed ChromHMM", Output.type = "states", Experiment.accession=NA,
-    Assay = "ChromHMM", Biosample.term.id=NA, 
-    Biosample.term.name="brain inf. temporal lobe",
-    Biosample.type=NA,
-    Biosample.life.stage=NA, Biosample.sex=NA)
-e073 = data.frame(File.accession = "E073_imp12_mn_trun",
-   File.format = "bed ChromHMM", Output.type = "states", Experiment.accession=NA,
-    Assay = "ChromHMM", Biosample.term.id=NA, 
-    Biosample.term.name="brain prefr. cortex",
-    Biosample.type=NA,
-    Biosample.life.stage=NA, Biosample.sex=NA)
-e088 = data.frame(File.accession = "E088_imp12_mn_trun",
-   File.format = "bed ChromHMM", Output.type = "states", Experiment.accession=NA,
-    Assay = "ChromHMM", Biosample.term.id=NA, 
-    Biosample.term.name="fetal lung",
-    Biosample.type=NA,
-    Biosample.life.stage=NA, Biosample.sex=NA)
-e096 = data.frame(File.accession = "E096_imp12_mn_trun",
-   File.format = "bed ChromHMM", Output.type = "states", Experiment.accession=NA,
-    Assay = "ChromHMM", Biosample.term.id=NA, 
-    Biosample.term.name="adult lung",
-    Biosample.type=NA,
-    Biosample.life.stage=NA, Biosample.sex=NA)
-```
-```{r lkcd}
-cd = DataFrame(rbind(hsFiles, rbind(e072, e073, e088, e096)))
-cd[1:4,1:6]
+The following turns a very ad hoc filtering of the collection names
+into a DataFrame.
+
+```{r getcold}
+cd = makeColData()
+head(cd,2)
 ```
 
 ## Extended RaggedExperiment
 
 ```{r domor1}
-okdf = DataFrame(hsFiles)
-rownames(okdf) = hsFiles[,1]
-loccon = localMongolite(db="txregnet")
-rme1 = RaggedMongoExpt(loccon, colData=okdf)
-rme1
+rme0 = RaggedMongoExpt(con1, colData=cd)
+rme1 = rme0[, which(cd$type=="FP")]
 ```
 
-```{r ccc}
-badn = c("seqnames", "ranges", "strand", "seqlevels", "seqlengths", "isCircular", "start", "end", "width", "element")
-cleanCols = function(x) setdiff(colnames(x), badn)
-allst = subsetByOverlaps(rme1[,c(2,4,5)], GRanges("chr1", IRanges(1,8e5))) 
-grl = GRangesList(lapply(allst, function(x) {
-     ans = GRanges(x$chrom, IRanges(x$chromStart, x$chromEnd)); mcols(ans) = x[,cleanCols(x)]; ans
-     }))
-re = RaggedExperiment(grl, colData=colData(rme1[,c(2,4,5)])) 
-dim(sparseAssay(re))
-dim(compactAssay(re))
+A key method in development is subsetting the archive by genomic coordinates.
+
+```{r lksb}
+s1 = sbov(rme1, GRanges("chr17", IRanges(38e6,38.4e6)))
+s1
+dim(ca <- compactAssay(s1, 3))
+head(ca[,c(7,18)])
 ```
 
-# Working with a large TxRegNet corpus
-
-Need to be able to generate appropriate query for
-document type.
-
-```{r lklarge}
-txr = try(txregRemote())
-data(harmMatch)
-harmMatch = DataFrame(harmMatch)
-if (!inherits(txr, "try-error")) {
-myc2 = harmMatch[grep("HS$", rownames(harmMatch)),]
-rme2 = RaggedMongoExpt(con=txr, colData=myc2[1:200,])
-rme2
-ss = subsetByOverlaps(rme2, GRanges("chr10", IRanges(1, 1e6)))
-summary(sapply(ss, nrow))
-# now convert this to GRangesList and then RaggedExperiment
-}
-```
-
-
-## Cleanup
-
-In a multiuser system this could cause problems if someone
-is running examples or building vignette.  May need to
-use munged collection names, perhaps with uuids.
-
-```{r doclean}
-try(system('mongo txregnet --eval "db.vjc1.remove({})"'))
-try(system('mongo txregnet --eval "db.vjc2.remove({})"'))
-```
-
+# Visualizing coincidence
 
 
 
