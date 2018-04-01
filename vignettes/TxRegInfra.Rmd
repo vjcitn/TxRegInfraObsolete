@@ -7,9 +7,6 @@ vignette: >
   %\VignetteIndexEntry{TxRegInfra -- classes and methods for TxRegQuery}
   %\VignetteEncoding{UTF-8}
 output:
-  BiocStyle::pdf_document:
-    toc: yes 
-    number_sections: yes 
   BiocStyle::html_document:
     highlight: pygments
     number_sections: yes 
@@ -21,7 +18,6 @@ output:
 suppressPackageStartupMessages({
 library(TxRegInfra)
 library(GenomicFiles)
-library(RMongo)
 })
 ```
 
@@ -34,30 +30,6 @@ factor binding site (TFBS) data.  Owing to the volume of emerging tissue-specifi
 data, special data modalities are used.
 
 # Managing bed file content with mongodb
-
-## Importing documents
-
-Given a working MongoDb distribution with the command line
-utility `mongoimport`, the following function can be used
-to import a document formatted with tab-separated values.
-This should be made more general.
-
-```
-> TxRegInfra:::.importToMongo
-function (path, collectionName, fields, dbname = "db", type = "tsv", 
-    importCmd = "mongoimport", host = "127.0.0.1") 
-{
-    if (type != "tsv") 
-        stop("only handling tsv at this time")
-    cmd = paste0(importCmd, " --host ", host, " --db ", dbname, 
-        " --collection ", collectionName, " --type ", type, " --fields ", 
-        fields, "  --file ", path)
-    chk = try(system(cmd, intern = TRUE))
-    if (inherits(chk, "try-error")) 
-        return(chk)
-    TRUE
-}
-```
 
 ## Querying the `txregnet` database
 
@@ -84,6 +56,8 @@ The following is improvised and may be fragile:
 parent.env(con1)$orig
 ```
 
+### Queries and aggregation
+
 We can get a list of collections in the database:
 ```{r getl}
 head(c1 <- listAllCollections(url=URL_txregInAWS(), db="txregnet"))
@@ -91,8 +65,39 @@ head(c1 <- listAllCollections(url=URL_txregInAWS(), db="txregnet"))
 
 We can get a record from a given collection:
 ```{r getl2}
-mongo(url=URL_txregInAWS(), db="txregnet", collection=c1[1])
+mongo(url=URL_txregInAWS(), db="txregnet", collection=c1[1])$find(limit=1)
 ```
+Queries can be composed using JSON.  We have a tool
+to generate queries that employ the mongodb aggregation
+method.  Here we demonstrate this by computing, for each
+chromosome, the count and
+minimum values of the footprint statistic on CD14 cells.
+
+```{r doagg}
+m1 = mongo(url = URL_txregInAWS(), db = "txregnet",  collection="CD14_DS17215_hg19_FP")
+newagg = makeAggregator( by="chr", vbl="stat", op="$min", opname="min")
+```
+The JSON layout of this aggregating query is
+```
+[
+  {
+    "$group": {
+      "_id": ["$chr"],
+      "count": {
+        "$sum": [1]
+      },
+      "min": {
+        "$min": ["$stat"]
+      }
+    }
+  }
+] 
+```
+Invocation returns a data frame:
+```{r lkagggg}
+head(m1$aggregate(newagg))
+```
+
 
 # An integrative container
 
@@ -118,23 +123,23 @@ rme1 = rme0[, which(cd$type=="FP")]
 A key method in development is subsetting the archive by genomic coordinates.
 
 ```{r lksb, cache=TRUE}
-s1 = sbov(rme1, GRanges("chr17", IRanges(38e6,38.1e6)))
+s1 = sbov(rme1, GRanges("chr17", IRanges(38.07e6,38.09e6)))
 s1
-dim(ca <- sparseAssay(s1, 3))  # compact gives stack overflow
-head(ca[,c(7,18)])
+dim(sa <- sparseAssay(s1, 3))  # compact gives segfault
+sa[953:956,c("fLung_DS14724_hg19_FP", "fMuscle_arm_DS17765_hg19_FP")]
 ```
 
 # Visualizing coincidence
 
 ```{r mym}
 ormm = txmodels("ORMDL3", plot=FALSE)
-car = strsplit(rownames(ca), ":|-")
+sar = strsplit(rownames(sa), ":|-")
 an = as.numeric
-gr = GRanges(ormm@chromosome, IRanges(an(sapply(car,"[", 2)), an(sapply(car,"[", 3))))
+gr = GRanges(ormm@chromosome, IRanges(an(sapply(sar,"[", 2)), an(sapply(sar,"[", 3))))
 gr1 = gr
-gr1$score = ca[,1]
+gr1$score = sa[,1]
 gr2 = gr
-gr2$score = ca[,2]
+gr2$score = sa[,2]
 sc1 = DataTrack(gr1)
 sc2 = DataTrack(gr2)
 plotTracks(list(GenomeAxisTrack(), sc1, sc2, ormm), showId=TRUE)
