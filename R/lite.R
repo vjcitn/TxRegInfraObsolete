@@ -105,7 +105,9 @@ makeAggregator = function( by = "chrom", vbl = "chromStart",
 #' @param cfields a named character(3) vector with names 'chrom', 'start',
 #' 'end'; the element values will be used to name document fields in the query
 #' @examples
-#' gr = GRanges("chr1", cfields=c(chrom="chr", start="start", end="end")
+#' gr = GRanges("chr1", IRanges(1,25000))
+#' grConverter(gr, cfields=c(chrom="chr", start="start", end="end"))
+#' @export
 grConverter = function(queryGRange, 
     cfields = c(chrom="chrom", start="chromStart", end="chromEnd")) {
     stopifnot(length(queryGRange)==1)
@@ -133,6 +135,9 @@ setOldClass("mongo")
 setClass("RaggedMongoExpt", representation(con="mongo"),
      contains="RaggedExperiment")
 
+#' bind colData to a mongo-based ragged-experiment incubator
+#' @param con a mongolite::mongo instance
+#' @param colData a DataFrame instance
 #' @export
 RaggedMongoExpt = function(con, colData) {
    nsamp = nrow(colData)
@@ -195,6 +200,10 @@ basicCfieldsMap = function() {
        HS = list(cfields=c(chrom="chrom", start="chromStart", end="chromEnd")))
 }
 
+#' generate a list of GRanges to JSON for queries to mongo
+#' @param rme RaggedMongoExperiment instance
+#' @param map list of lists of named character vectors
+#' @param docTypeName character(1) that identifies sample 'type'
 #' @export
 makeGRConverterList = function(rme, map=basicCfieldsMap(),
    docTypeName="type") {
@@ -219,6 +228,7 @@ makeGRConverterList = function(rme, map=basicCfieldsMap(),
 #' m1 = mongolite::mongo(url=URL_txregInAWS(), db="txregnet")
 #' cd = makeColData(url=URL_txregInAWS(), db="txregnet")
 #' rme1 = RaggedMongoExpt(m1, cd[which(cd$type=="FP"),][1:8,])
+#' BiocParallel::register(BiocParallel::SerialParam())
 #' ss = sbov(rme1, GRanges("chr1", IRanges(1e6, 1.5e6)))
 #' @export
 sbov = function(rme, gr, map=basicCfieldsMap(), docTypeName="type") {

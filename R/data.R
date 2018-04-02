@@ -1,11 +1,11 @@
-#' hsFiles: metadata about a small collection of bed files for demonstrating TxRegInfra
-#' @importFrom utils data
-#' @docType data
-#' @format DataFrame
-#' @examples
-#' data(hsFiles)
-#' hsFiles[1:4,1:4]
-"hsFiles"
+# #' hsFiles: metadata about a small collection of bed files for demonstrating TxRegInfra
+# #' @importFrom utils data
+# #' @docType data
+# #' @format DataFrame
+# #' @examples
+# #' data(hsFiles)
+# #' hsFiles[1:4,1:4]
+# "hsFiles"
 #' ragged41FP: A RaggedExperiment instance with digital genomic footprints over the coding region of ORMDL3
 #' @docType data
 #' @format DataFrame
@@ -26,6 +26,7 @@
 #'   m1 = mongolite::mongo(url=URL_txregInAWS(), db="txregnet")
 #'   cd = makeColData(url=URL_txregInAWS(), db="txregnet")
 #'   rme1 = RaggedMongoExpt(m1, cd[which(cd$type=="FP"),])
+#'   BiocParallel::register(BiocParallel::SerialParam()) # necessary for mac?
 #'   raggHHIP = sbov(rme1, GRanges("chr4", IRanges(145565173, 145605173)))
 #'   ca = compactAssay(raggHHIP,3)[1:200,]
 #'   image(ca, main="over HHIP", axes=FALSE)
