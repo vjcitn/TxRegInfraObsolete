@@ -6,7 +6,7 @@ Version: 0.0.24
 Author: Vince Carey
 Depends: RaggedExperiment (>= 1.3.11), mongolite
 Imports: rjson, GenomicRanges, IRanges, BiocParallel,
-	Rsamtools
+	Rsamtools, GenomeInfoDb, Gviz, ensembldb
 Suggests: knitr, GenomicFiles, S4Vectors, EnsDb.Hsapiens.v75
 Maintainer: VJ Carey <stvjc@channing.harvard.edu>
 License: Artistic-2.0

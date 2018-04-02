@@ -132,16 +132,16 @@ sa[953:956,c("fLung_DS14724_hg19_FP", "fMuscle_arm_DS17765_hg19_FP")]
 # Visualizing coincidence
 
 ```{r mym}
-ormm = txmodels("ORMDL3", plot=FALSE)
+ormm = txmodels("ORMDL3", plot=FALSE, name="ORMDL3")
 sar = strsplit(rownames(sa), ":|-")
 an = as.numeric
 gr = GRanges(ormm@chromosome, IRanges(an(sapply(sar,"[", 2)), an(sapply(sar,"[", 3))))
 gr1 = gr
-gr1$score = sa[,1]
+gr1$score = 1-sa[,1]
 gr2 = gr
-gr2$score = sa[,2]
-sc1 = DataTrack(gr1)
-sc2 = DataTrack(gr2)
+gr2$score = 1-sa[,2]
+sc1 = DataTrack(gr1, name="Lung FP")
+sc2 = DataTrack(gr2, name="Musc/Arm FP")
 plotTracks(list(GenomeAxisTrack(), sc1, sc2, ormm), showId=TRUE)
 ```
 

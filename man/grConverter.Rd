@@ -17,5 +17,6 @@ grConverter(queryGRange, cfields = c(chrom = "chrom", start = "chromStart",
 convert a GRanges to a JSON query for mongodb
 }
 \examples{
-gr = GRanges("chr1", cfields=c(chrom="chr", start="start", end="end")
+gr = GRanges("chr1", IRanges(1,25000))
+grConverter(gr, cfields=c(chrom="chr", start="start", end="end"))
 }
