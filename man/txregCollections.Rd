@@ -20,5 +20,5 @@ a character vector of collection names
 list collections in AWS mongo server for txregnet
 }
 \examples{
-txregCollections()[1:5]
+if (verifyHasMongoCmd()) txregCollections()[1:5]
 }

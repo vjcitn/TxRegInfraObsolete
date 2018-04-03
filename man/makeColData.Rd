@@ -22,5 +22,5 @@ a DataFrame instance
 generate a colData component corresponding to a mongodb
 }
 \examples{
-makeColData()
+if (verifyHasMongoCmd()) makeColData()
 }

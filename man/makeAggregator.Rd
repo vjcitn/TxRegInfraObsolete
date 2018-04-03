@@ -29,7 +29,7 @@ This produces json that can be used as an argument to m$aggregate() for m a mong
 }
 \examples{
 makeAggregator()
-if (interactive()) {
+if (interactive() & verifyHasMongoCmd()) {
    remURL = URL_txregInAWS()
    colls = listAllCollections( url=remURL, db = "txregnet")
    m1 = mongo(url = remURL, db = "txregnet", 

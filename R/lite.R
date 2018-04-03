@@ -8,7 +8,7 @@
 #' @param db character(1) db name
 #' @return a character vector of collection names
 #' @examples
-#' txregCollections()[1:5]
+#' if (verifyHasMongoCmd()) txregCollections()[1:5]
 #' @export
 txregCollections = function(ignore=1:3, url=URL_txregInAWS(), db="txregnet") {
   lis = system(sprintf("mongo %s/%s --eval 'db.getCollectionNames()'",
@@ -24,7 +24,7 @@ txregCollections = function(ignore=1:3, url=URL_txregInAWS(), db="txregnet") {
 #' @param limitn numeric(1) number of records to probe to get field names
 #' @return a vector of strings
 #' @examples
-#' getFieldNames("CD34_DS12274_hg19_FP")
+#' getFieldNames("CD34_DS12274_hg19_FP", check=FALSE) # we know this collection is there
 #' @export
 getFieldNames = function(collection, check=TRUE, 
     url=URL_txregInAWS(), db="txregnet", limitn=1) {
@@ -64,7 +64,7 @@ basicFormatter = function(x, spltok="_") {
 #' returns a DataFrame with number of rows equal to the length of input
 #' @return a DataFrame instance
 #' @examples
-#' makeColData()
+#' if (verifyHasMongoCmd()) makeColData()
 #' @export
 makeColData = function(url=URL_txregInAWS(), db="txregnet",
   formatter = basicFormatter) {
@@ -83,7 +83,7 @@ makeColData = function(url=URL_txregInAWS(), db="txregnet",
 #' @note This produces json that can be used as an argument to m$aggregate() for m a mongolite::mongo instance
 #' @examples
 #' makeAggregator()
-#' if (interactive()) {
+#' if (interactive() & verifyHasMongoCmd()) {
 #'    remURL = URL_txregInAWS()
 #'    colls = listAllCollections( url=remURL, db = "txregnet")
 #'    m1 = mongo(url = remURL, db = "txregnet", 
@@ -250,11 +250,13 @@ makeGRConverterList = function(rme, map=basicCfieldsMap(),
 #' @return a RaggedExperiment instance
 #' @examples
 #' requireNamespace("mongolite")
-#' m1 = mongolite::mongo(url=URL_txregInAWS(), db="txregnet")
-#' cd = makeColData(url=URL_txregInAWS(), db="txregnet")
-#' rme1 = RaggedMongoExpt(m1, cd[which(cd$type=="FP"),][1:8,])
-#' BiocParallel::register(BiocParallel::SerialParam())
-#' ss = sbov(rme1, GRanges("chr1", IRanges(1e6, 1.5e6)))
+#' if (verifyHasMongoCmd()) {  # for makeColData
+#'  m1 = mongolite::mongo(url=URL_txregInAWS(), db="txregnet")
+#'  cd = makeColData(url=URL_txregInAWS(), db="txregnet")
+#'  rme1 = RaggedMongoExpt(m1, cd[which(cd$type=="FP"),][1:8,])
+#'  BiocParallel::register(BiocParallel::SerialParam())
+#'  ss = sbov(rme1, GRanges("chr1", IRanges(1e6, 1.5e6)))
+#' }
 #' @export
 sbov = function(rme, gr, map=basicCfieldsMap(), docTypeName="type") {
   stopifnot(is(gr, "GRanges"), length(gr)==1)
