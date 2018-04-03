@@ -58,14 +58,21 @@ parent.env(con1)$orig
 
 ### Queries and aggregation
 
-We can get a list of collections in the database:
-```{r getl}
+If the `mongo`
+utility is available as a system
+command, we can get a list of collections in the database
+as follows.
+```{r getl, eval=FALSE}
 head(c1 <- listAllCollections(url=URL_txregInAWS(), db="txregnet"))
 ```
+Otherwise, as long as `r CRANpkg("mongolite")` is installed,
+as long as we know the collection names of interest, we
+can use them as noted throughout this vignette.
 
 We can get a record from a given collection:
 ```{r getl2}
-mongo(url=URL_txregInAWS(), db="txregnet", collection=c1[1])$find(limit=1)
+mongo(url=URL_txregInAWS(), db="txregnet", 
+   collection="Adipose_Subcutaneous_allpairs_v7_eQTL")$find(limit=1)
 ```
 Queries can be composed using JSON.  We have a tool
 to generate queries that employ the mongodb aggregation
