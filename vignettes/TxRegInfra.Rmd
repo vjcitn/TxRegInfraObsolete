@@ -116,7 +116,8 @@ The following turns a very ad hoc filtering of the collection names
 into a DataFrame.
 
 ```{r getcold}
-cd = makeColData()
+# cd = makeColData() # works when mongo does
+cd = TxRegInfra::basicColData
 head(cd,2)
 ```
 

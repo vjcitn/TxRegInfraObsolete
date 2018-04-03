@@ -1,3 +1,11 @@
+#' basicColData: metadata about a small collection of files for demonstrating TxRegInfra
+#' @importFrom utils data
+#' @docType data
+#' @format DataFrame from S4Vectors
+#' @examples
+#' data(basicColData)
+#' head(basicColData)
+"basicColData"
 #' dgf_meta: metadata about a small collection of bed files for demonstrating TxRegInfra
 #' @importFrom utils data
 #' @docType data
