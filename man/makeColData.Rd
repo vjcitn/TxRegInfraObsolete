@@ -15,6 +15,9 @@ makeColData(url = URL_txregInAWS(), db = "txregnet",
 \item{formatter}{a function that takes in a character vector and
 returns a DataFrame with number of rows equal to the length of input}
 }
+\value{
+a DataFrame instance
+}
 \description{
 generate a colData component corresponding to a mongodb
 }

@@ -9,6 +9,9 @@ verifyRunningMongodb(url = "mongodb://127.0.0.1")
 \arguments{
 \item{url}{character(1) defining mongodb server}
 }
+\value{
+logical(1)
+}
 \description{
 check for accessible local mongodb
 }

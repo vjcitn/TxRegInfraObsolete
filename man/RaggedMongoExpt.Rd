@@ -11,6 +11,9 @@ RaggedMongoExpt(con, colData)
 
 \item{colData}{a DataFrame instance}
 }
+\value{
+instance of RaggedMongoExpt
+}
 \description{
 bind colData to a mongo-based ragged-experiment incubator
 }

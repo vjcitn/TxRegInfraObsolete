@@ -36,6 +36,7 @@
 #' stopifnot(chk2)
 #' system('mongo txregnet --eval "db.vjc1.remove({})"') # cleanup
 #' system('mongo txregnet --eval "db.vjc2.remove({})"') # cleanup
+#' @return if error encountered, return the try-error content, otherwise TRUE
 #' @export
 importBedToMongo = function( path, collectionName, 
     bedType="narrowPeak", dbname = "db",

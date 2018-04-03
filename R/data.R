@@ -1,11 +1,11 @@
-# #' hsFiles: metadata about a small collection of bed files for demonstrating TxRegInfra
-# #' @importFrom utils data
-# #' @docType data
-# #' @format DataFrame
-# #' @examples
-# #' data(hsFiles)
-# #' hsFiles[1:4,1:4]
-# "hsFiles"
+#' dgf_meta: metadata about a small collection of bed files for demonstrating TxRegInfra
+#' @importFrom utils data
+#' @docType data
+#' @format data.frame
+#' @examples
+#' data(dgf_meta)
+#' head(dgf_meta)
+"dgf_meta"
 #' ragged41FP: A RaggedExperiment instance with digital genomic footprints over the coding region of ORMDL3
 #' @docType data
 #' @format DataFrame

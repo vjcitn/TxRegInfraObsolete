@@ -20,6 +20,9 @@ importBedToMongo(path, collectionName, bedType = "narrowPeak",
 
 \item{host}{host identifier for mongoimport, defaults to 127.0.0.1}
 }
+\value{
+if error encountered, return the try-error content, otherwise TRUE
+}
 \description{
 arrange import to mongo using mongoimport, setting up type and fields appropriately
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/txmodels.R
 \name{txmodels}
 \alias{txmodels}
-\title{use Gviz to render transcript models via GeneRegionTrack}
+\title{use Gviz to render transcript models via GeneRegionTrack, but keep lightweight through requireNamespace and suggestion for installation}
 \usage{
 txmodels(sym, gr, edb = "EnsDb.Hsapiens.v75", plot.it = FALSE, radius = 0,
   ...)
@@ -24,7 +24,7 @@ txmodels(sym, gr, edb = "EnsDb.Hsapiens.v75", plot.it = FALSE, radius = 0,
 an instance of Gviz::GeneRegionTrack, invisibly returned
 }
 \description{
-use Gviz to render transcript models via GeneRegionTrack
+use Gviz to render transcript models via GeneRegionTrack, but keep lightweight through requireNamespace and suggestion for installation
 }
 \examples{
 t0 = txmodels("ORMDL3", plot.it=TRUE, name="ORMDL3")

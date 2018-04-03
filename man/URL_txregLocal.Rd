@@ -6,6 +6,9 @@
 \usage{
 URL_txregLocal()
 }
+\value{
+a string with 127.0.0.1 instead of localhost, useful on macosx
+}
 \description{
 local mongodb txregnet
 }

@@ -13,6 +13,9 @@ makeGRConverterList(rme, map = basicCfieldsMap(), docTypeName = "type")
 
 \item{docTypeName}{character(1) that identifies sample 'type'}
 }
+\value{
+a list of JSON documents
+}
 \description{
 generate a list of GRanges to JSON for queries to mongo
 }

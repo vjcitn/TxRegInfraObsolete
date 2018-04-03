@@ -11,6 +11,9 @@ listAllCollections(url = "mongodb://127.0.0.1:27017", db = "test")
 
 \item{db}{character(1) mongodb database name}
 }
+\value{
+vector of strings
+}
 \description{
 list all collections in a database, using command-line interface
 }

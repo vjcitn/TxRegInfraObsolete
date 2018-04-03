@@ -11,6 +11,9 @@ basicFormatter(x, spltok = "_")
 
 \item{spltok}{token to use in strsplit}
 }
+\value{
+a DataFrame instance
+}
 \description{
 operate on a character vector to derive a DataFrame, splitting on a tokenand retrieving first and last split fragments as 'base' and 'type' fields
 }

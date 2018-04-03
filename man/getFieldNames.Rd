@@ -8,6 +8,8 @@ getFieldNames(collection, check = TRUE, url = URL_txregInAWS(),
   db = "txregnet", limitn = 1)
 }
 \arguments{
+\item{collection}{character(1) name of collection}
+
 \item{check}{logical(1) if TRUE will verify that \code{coll} is present}
 
 \item{url}{character(1) mongodb url}
@@ -15,8 +17,9 @@ getFieldNames(collection, check = TRUE, url = URL_txregInAWS(),
 \item{db}{character(1) mongodb db name}
 
 \item{limitn}{numeric(1) number of records to probe to get field names}
-
-\item{coll}{character(1) name of collection}
+}
+\value{
+a vector of strings
 }
 \description{
 get names of fields in a collection in remote txregnet

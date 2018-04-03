@@ -8,6 +8,18 @@ a given variable) within a collection}
 makeAggregator(by = "chrom", vbl = "chromStart", opname = "average",
   op = "$avg")
 }
+\arguments{
+\item{by}{character(1) telling the field for stratifying records for aggregation}
+
+\item{vbl}{character(1) telling field with numerical value for which a statistic will be computed within strata defined by 'by'}
+
+\item{opname}{character(1) define the name of the aggregation}
+
+\item{op}{character(1) evaluating to a mongo aggregation operator like `$avg` or `$min`}
+}
+\value{
+a JSON document as produced by rjson::toJSON
+}
 \description{
 generate JSON to aggregate (counting records, and, by default, averaging
 a given variable) within a collection

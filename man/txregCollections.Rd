@@ -13,6 +13,9 @@ txregCollections(ignore = 1:3, url = URL_txregInAWS(), db = "txregnet")
 
 \item{db}{character(1) db name}
 }
+\value{
+a character vector of collection names
+}
 \description{
 list collections in AWS mongo server for txregnet
 }

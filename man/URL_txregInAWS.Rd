@@ -6,6 +6,9 @@
 \usage{
 URL_txregInAWS()
 }
+\value{
+character(1) URL for a hosted resource
+}
 \description{
 return mongodb URL for working mongo server
 }

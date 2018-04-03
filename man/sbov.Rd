@@ -15,6 +15,9 @@ sbov(rme, gr, map = basicCfieldsMap(), docTypeName = "type")
 
 \item{docTypeName}{character(1) naming column of colData(rme) that has document type}
 }
+\value{
+a RaggedExperiment instance
+}
 \description{
 prototype of subsetter for mongo resource
 }
