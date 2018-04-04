@@ -16,5 +16,5 @@ logical(1)
 check for accessible local mongodb
 }
 \examples{
-verifyRunningMongodb()
+if (interactive()) verifyRunningMongodb()
 }

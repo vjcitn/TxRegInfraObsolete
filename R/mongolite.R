@@ -6,7 +6,7 @@
 #' @param url character(1) defining mongodb server
 #' @return logical(1)
 #' @examples
-#' verifyRunningMongodb()
+#' if (interactive()) verifyRunningMongodb()
 #' @export
 verifyRunningMongodb = function(url="mongodb://127.0.0.1") {
   requireNamespace("mongolite")
@@ -15,12 +15,14 @@ verifyRunningMongodb = function(url="mongodb://127.0.0.1") {
 }
 
 #' check for existence of 'mongo' command, for db.getCollectionNames etc.
+#' @param cmd character(1) either 'mongo' or 'mongoimport'
+#' @note we use mongoimport command to import tsv files; mongolite import 'method' not immediately useful for this
 #' @return logical(1)
 #' @examples
-#' verifyHasMongoCmd()
+#' if (interactive()) verifyHasMongoCmd()
 #' @export
-verifyHasMongoCmd = function() {
- mcmd = try(system2("mongo", stdout=TRUE, stderr=TRUE))
+verifyHasMongoCmd = function(cmd="mongo") {
+ mcmd = try(system2(cmd, args="--help", stdout=TRUE, stderr=TRUE))
  !inherits(mcmd, "try-error")
 }
 

@@ -3,6 +3,7 @@
     type="tsv", importCmd = "mongoimport", host="127.0.0.1") {
   if (type != "tsv") stop("only handling tsv at this time")
 # should check viability of importCmd, e.g., system(paste0(importCmd, "--help"), intern=TRUE) does not yield error
+  if (!verifyHasMongoCmd("mongoimport")) stop("need system command mongoimport to be available")
   cmd = paste0(importCmd, " --host ", host, " --db ", dbname, " --collection ",
                  collectionName, " --type ", type, " --fields ", fields,
                  "  --file ", path)
@@ -30,12 +31,14 @@
 #' @examples
 #' f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
 #' f2 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="E096_imp12")
+#' if (verifyHasMongoCmd("mongoimport")) {
 #' chk1 = importBedToMongo(f1, "vjc1", db="txregnet")
 #' stopifnot(chk1)
 #' chk2 = importBedToMongo(f2, "vjc2", db="txregnet", bedType="chromHMM")
 #' stopifnot(chk2)
 #' system('mongo txregnet --eval "db.vjc1.remove({})"') # cleanup
 #' system('mongo txregnet --eval "db.vjc2.remove({})"') # cleanup
+#' }
 #' @return if error encountered, return the try-error content, otherwise TRUE
 #' @export
 importBedToMongo = function( path, collectionName, 

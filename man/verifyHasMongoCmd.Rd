@@ -4,7 +4,10 @@
 \alias{verifyHasMongoCmd}
 \title{check for existence of 'mongo' command, for db.getCollectionNames etc.}
 \usage{
-verifyHasMongoCmd()
+verifyHasMongoCmd(cmd = "mongo")
+}
+\arguments{
+\item{cmd}{character(1) either 'mongo' or 'mongoimport'}
 }
 \value{
 logical(1)
@@ -12,6 +15,9 @@ logical(1)
 \description{
 check for existence of 'mongo' command, for db.getCollectionNames etc.
 }
+\note{
+we use mongoimport command to import tsv files; mongolite import 'method' not immediately useful for this
+}
 \examples{
-verifyHasMongoCmd()
+if (interactive()) verifyHasMongoCmd()
 }
