@@ -31,7 +31,7 @@ verifyHasMongoCmd = function(cmd = "mongo") {
 #' @param db character(1) mongodb database name
 #' @return vector of strings
 #' @examples
-#' if (verifyRunningMongodb()) listAllCollections()
+#' if (verifyHasMongoCmd()) listAllCollections()
 #' @export
 listAllCollections = function(url = "mongodb://127.0.0.1:27017", db = "test") {
     dbref = sprintf("%s/%s", url, db)
