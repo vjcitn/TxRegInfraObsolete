@@ -147,7 +147,7 @@ sa[953:956,c("fLung_DS14724_hg19_FP", "fMuscle_arm_DS17765_hg19_FP")]
 ormm = txmodels("ORMDL3", plot=FALSE, name="ORMDL3")
 sar = strsplit(rownames(sa), ":|-")
 an = as.numeric
-gr = GRanges(ormm@chromosome, IRanges(an(sapply(sar,"[", 2)), an(sapply(sar,"[", 3))))
+gr = GRanges(seqnames(ormm)[1], IRanges(an(sapply(sar,"[", 2)), an(sapply(sar,"[", 3))))
 gr1 = gr
 gr1$score = 1-sa[,1]
 gr2 = gr
