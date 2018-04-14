@@ -22,12 +22,12 @@ a RaggedExperiment instance
 prototype of subsetter for mongo resource
 }
 \examples{
-requireNamespace("mongolite")
+requireNamespace('mongolite')
 if (verifyHasMongoCmd()) {  # for makeColData
- m1 = mongolite::mongo(url=URL_txregInAWS(), db="txregnet")
- cd = makeColData(url=URL_txregInAWS(), db="txregnet")
- rme1 = RaggedMongoExpt(m1, cd[which(cd$type=="FP"),][1:8,])
+ m1 = mongolite::mongo(url=URL_txregInAWS(), db='txregnet')
+ cd = makeColData(url=URL_txregInAWS(), db='txregnet')
+ rme1 = RaggedMongoExpt(m1, cd[which(cd$type=='FP'),][seq_len(8),])
  BiocParallel::register(BiocParallel::SerialParam())
- ss = sbov(rme1, GRanges("chr1", IRanges(1e6, 1.5e6)))
+ ss = sbov(rme1, GRanges('chr1', IRanges(1e6, 1.5e6)))
 }
 }

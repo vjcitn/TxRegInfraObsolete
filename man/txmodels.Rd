@@ -27,8 +27,8 @@ an instance of Gviz::GeneRegionTrack, invisibly returned
 use Gviz to render transcript models via GeneRegionTrack, but keep lightweight through requireNamespace and suggestion for installation
 }
 \examples{
-t0 = txmodels("ORMDL3", plot.it=TRUE, name="ORMDL3")
-t1 = txmodels("ORMDL3", plot.it=FALSE, name="meta", collapseTranscripts="meta")
-requireNamespace("Gviz")
+t0 = txmodels('ORMDL3', plot.it=TRUE, name='ORMDL3')
+t1 = txmodels('ORMDL3', plot.it=FALSE, name='meta', collapseTranscripts='meta')
+requireNamespace('Gviz')
 Gviz::plotTracks(list(Gviz::GenomeAxisTrack(), t0, t1), showId=TRUE)
 }

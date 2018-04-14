@@ -14,7 +14,7 @@ importBedToMongo(path, collectionName, bedType = "narrowPeak",
 
 \item{bedType}{one of 'narrowPeak', 'broadPeak', 'chromHMM': contact developers for other types if desired}
 
-\item{dbname}{mongodb database name, used directly with system("mongoimort ...")}
+\item{dbname}{mongodb database name, used directly with system('mongoimort ...')}
 
 \item{importCmd}{how to invoke 'mongoimport', default is to assume it can be found in PATH}
 
@@ -27,14 +27,14 @@ if error encountered, return the try-error content, otherwise TRUE
 arrange import to mongo using mongoimport, setting up type and fields appropriately
 }
 \examples{
-f1 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="ENCFF971VCD")
-f2 = dir(system.file("bedfiles", package="TxRegInfra"), full=TRUE, patt="E096_imp12")
-if (verifyHasMongoCmd("mongoimport")) {
-chk1 = importBedToMongo(f1, "vjc1", db="txregnet")
+f1 = dir(system.file('bedfiles', package='TxRegInfra'), full=TRUE, patt='ENCFF971VCD')
+f2 = dir(system.file('bedfiles', package='TxRegInfra'), full=TRUE, patt='E096_imp12')
+if (verifyHasMongoCmd('mongoimport')) {
+chk1 = importBedToMongo(f1, 'vjc1', db='txregnet')
 stopifnot(chk1)
-chk2 = importBedToMongo(f2, "vjc2", db="txregnet", bedType="chromHMM")
+chk2 = importBedToMongo(f2, 'vjc2', db='txregnet', bedType='chromHMM')
 stopifnot(chk2)
-system('mongo txregnet --eval "db.vjc1.remove({})"') # cleanup
-system('mongo txregnet --eval "db.vjc2.remove({})"') # cleanup
+system('mongo txregnet --eval 'db.vjc1.remove({})'') # cleanup
+system('mongo txregnet --eval 'db.vjc2.remove({})'') # cleanup
 }
 }

@@ -31,12 +31,12 @@ This produces json that can be used as an argument to m$aggregate() for m a mong
 makeAggregator()
 if (interactive() & verifyHasMongoCmd()) {
    remURL = URL_txregInAWS()
-   colls = listAllCollections( url=remURL, db = "txregnet")
-   m1 = mongo(url = remURL, db = "txregnet", 
-     collection="CD14_DS17215_hg19_FP")
+   colls = listAllCollections( url=remURL, db = 'txregnet')
+   m1 = mongo(url = remURL, db = 'txregnet', 
+     collection='CD14_DS17215_hg19_FP')
 # find minimum value of statistic 'stat' per chromosome
-   newagg = makeAggregator( by="chr",
-     vbl="stat", op="$min", opname="min")
+   newagg = makeAggregator( by='chr',
+     vbl='stat', op='$min', opname='min')
    tab = m1$aggregate( newagg )
    head(tab)
    }

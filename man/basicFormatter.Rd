@@ -18,10 +18,10 @@ a DataFrame instance
 operate on a character vector to derive a DataFrame, splitting on a tokenand retrieving first and last split fragments as 'base' and 'type' fields
 }
 \examples{
-	some = c("Adipose_Subcutaneous_allpairs_v7_eQTL",
-"CD14_DS17215_hg19_FP",
-"CD19_DS17186_hg19_FP",
-"ENCFF001WGV_hg19_HS",
-"ENCFF994OCD_hg19_HS")
+\\tsome = c('Adipose_Subcutaneous_allpairs_v7_eQTL',
+\\t'CD14_DS17215_hg19_FP',
+\\t'CD19_DS17186_hg19_FP',
+\\t'ENCFF001WGV_hg19_HS',
+\\t'ENCFF994OCD_hg19_HS')
 basicFormatter(some)
 }

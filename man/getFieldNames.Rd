@@ -25,5 +25,5 @@ a vector of strings
 get names of fields in a collection in remote txregnet
 }
 \examples{
-getFieldNames("CD34_DS12274_hg19_FP", check=FALSE) # we know this collection is there
+getFieldNames('CD34_DS12274_hg19_FP', check=FALSE) # we know this collection is there
 }

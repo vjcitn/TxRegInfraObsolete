@@ -4,7 +4,8 @@
 \alias{txregCollections}
 \title{list collections in AWS mongo server for txregnet}
 \usage{
-txregCollections(ignore = 1:3, url = URL_txregInAWS(), db = "txregnet")
+txregCollections(ignore = seq_len(3), url = URL_txregInAWS(),
+  db = "txregnet")
 }
 \arguments{
 \item{ignore}{integer vector telling which lines of mongo db.getCollectionNames() result should be ignored}
@@ -20,5 +21,5 @@ a character vector of collection names
 list collections in AWS mongo server for txregnet
 }
 \examples{
-if (verifyHasMongoCmd()) txregCollections()[1:5]
+if (verifyHasMongoCmd()) txregCollections()[seq_len(5)]
 }
