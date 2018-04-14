@@ -27,8 +27,7 @@ txmodels = function(sym, gr, edb = "EnsDb.Hsapiens.v75", plot.it = FALSE, radius
         stop("exactly one of sym, gr must be nonmissing")
     require(edb, character.only = TRUE)  # FIXME
     if (!missing(sym)) {
-        data(genesymbol, package = "biovizBase")
-        gr = genesymbol[sym]
+        gr = biovizBase::genesymbol[sym]
     }
     GenomeInfoDb::seqlevelsStyle(gr) = "Ensembl"
     seq = as.character(GenomeInfoDb::seqnames(gr))[1]

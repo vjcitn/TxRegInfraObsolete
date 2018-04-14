@@ -41,11 +41,11 @@ getFieldNames = function(collection, check = TRUE, url = URL_txregInAWS(), db = 
 #' @param spltok token to use in strsplit
 #' @return a DataFrame instance
 #' @examples
-#' \tsome = c('Adipose_Subcutaneous_allpairs_v7_eQTL',
-#'\t'CD14_DS17215_hg19_FP',
-#'\t'CD19_DS17186_hg19_FP',
-#'\t'ENCFF001WGV_hg19_HS',
-#'\t'ENCFF994OCD_hg19_HS')
+#' some = c('Adipose_Subcutaneous_allpairs_v7_eQTL',
+#'   'CD14_DS17215_hg19_FP',
+#'   'CD19_DS17186_hg19_FP',
+#'   'ENCFF001WGV_hg19_HS',
+#'   'ENCFF994OCD_hg19_HS')
 #' basicFormatter(some)
 #' @export
 basicFormatter = function(x, spltok = "_") {
