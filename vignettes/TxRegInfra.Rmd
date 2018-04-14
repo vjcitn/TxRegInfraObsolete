@@ -14,7 +14,7 @@ output:
     toc: yes 
 ---
 
-```{r setup,echo=FALSE,results="hide"}
+```{r setup,echo=FALSE,results="hide", eval=TRUE}
 suppressPackageStartupMessages({
 library(TxRegInfra)
 library(GenomicFiles)
@@ -38,12 +38,14 @@ We focus on `r CRANpkg("mongolite")` as the interface.
 
 ### The connection 
 
-```{r lkmong}
+```{r lkmong, eval=TRUE}
 suppressPackageStartupMessages({
 library(TxRegInfra)
 library(mongolite)
 library(Gviz)
 library(EnsDb.Hsapiens.v75)
+library(BiocParallel)
+register(SerialParam())
 })
 con1 = mongo(url=URL_txregInAWS(), db="txregnet")
 con1
@@ -52,7 +54,7 @@ We will write methods that work with the 'fields' of this object.
 
 There is not much explicit reflectance in the mongolite API.
 The following is improvised and may be fragile:
-```{r lkpar}
+```{r lkpar, eval=TRUE}
 parent.env(con1)$orig
 ```
 
@@ -62,7 +64,7 @@ If the `mongo`
 utility is available as a system
 command, we can get a list of collections in the database
 as follows.
-```{r getl, eval=FALSE}
+```{r getl, eval=TRUE}
 head(c1 <- listAllCollections(url=URL_txregInAWS(), db="txregnet"))
 ```
 Otherwise, as long as `r CRANpkg("mongolite")` is installed,
@@ -70,7 +72,7 @@ as long as we know the collection names of interest, we
 can use them as noted throughout this vignette.
 
 We can get a record from a given collection:
-```{r getl2}
+```{r getl2, eval=TRUE}
 mongo(url=URL_txregInAWS(), db="txregnet", 
    collection="Adipose_Subcutaneous_allpairs_v7_eQTL")$find(limit=1)
 ```
@@ -80,7 +82,7 @@ method.  Here we demonstrate this by computing, for each
 chromosome, the count and
 minimum values of the footprint statistic on CD14 cells.
 
-```{r doagg}
+```{r doagg, eval=TRUE}
 m1 = mongo(url = URL_txregInAWS(), db = "txregnet",  collection="CD14_DS17215_hg19_FP")
 newagg = makeAggregator( by="chr", vbl="stat", op="$min", opname="min")
 ```
@@ -101,7 +103,7 @@ The JSON layout of this aggregating query is
 ] 
 ```
 Invocation returns a data frame:
-```{r lkagggg}
+```{r lkagggg, eval=TRUE}
 head(m1$aggregate(newagg))
 ```
 
@@ -115,7 +117,7 @@ We need to bind the metadata and information about the mongodb.
 The following turns a very ad hoc filtering of the collection names
 into a DataFrame.
 
-```{r getcold}
+```{r getcold, eval=TRUE}
 # cd = makeColData() # works when mongo does
 cd = TxRegInfra::basicColData
 head(cd,2)
@@ -123,14 +125,14 @@ head(cd,2)
 
 ## Extended RaggedExperiment
 
-```{r domor1}
+```{r domor1, eval=TRUE}
 rme0 = RaggedMongoExpt(con1, colData=cd)
 rme1 = rme0[, which(cd$type=="FP")]
 ```
 
 A key method in development is subsetting the archive by genomic coordinates.
 
-```{r lksb, cache=TRUE}
+```{r lksb, cache=TRUE, eval=TRUE}
 s1 = sbov(rme1, GRanges("chr17", IRanges(38.07e6,38.09e6)))
 s1
 dim(sa <- sparseAssay(s1, 3))  # compact gives segfault
@@ -139,7 +141,7 @@ sa[953:956,c("fLung_DS14724_hg19_FP", "fMuscle_arm_DS17765_hg19_FP")]
 
 # Visualizing coincidence
 
-```{r mym}
+```{r mym, eval=TRUE}
 ormm = txmodels("ORMDL3", plot=FALSE, name="ORMDL3")
 sar = strsplit(rownames(sa), ":|-")
 an = as.numeric

@@ -34,7 +34,7 @@ chk1 = importBedToMongo(f1, 'vjc1', db='txregnet')
 stopifnot(chk1)
 chk2 = importBedToMongo(f2, 'vjc2', db='txregnet', bedType='chromHMM')
 stopifnot(chk2)
-system('mongo txregnet --eval 'db.vjc1.remove({})'') # cleanup
-system('mongo txregnet --eval 'db.vjc2.remove({})'') # cleanup
+system2("mongo", args=c("txregnet", "--eval", "'db.vjc1.remove({})'")) 
+system2("mongo", args=c("txregnet", "--eval", "'db.vjc2.remove({})'"))
 }
 }

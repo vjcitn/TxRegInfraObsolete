@@ -34,8 +34,9 @@ verifyHasMongoCmd = function(cmd = "mongo") {
 #' if (verifyRunningMongodb()) listAllCollections()
 #' @export
 listAllCollections = function(url = "mongodb://127.0.0.1:27017", db = "test") {
-    lis = system(sprintf("mongo %s/%s --eval 'db.getCollectionNames()'", url, db), 
-        intern = TRUE)
+    dbref = sprintf("%s/%s", url, db)
+    lis = system2("mongo", c(dbref, "--eval", "'db.getCollectionNames()'"),
+       stdout=TRUE)
     rjson::fromJSON(paste0(lis[-c(seq_len(3))], collapse = ""))
 }
 
