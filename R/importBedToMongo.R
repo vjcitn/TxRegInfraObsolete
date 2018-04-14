@@ -3,15 +3,12 @@
     importCmd = "mongoimport", host = "127.0.0.1") {
     if (type != "tsv") 
         stop("only handling tsv at this time")
-    # should check viability of importCmd, e.g., system(paste0(importCmd, '--help'),
-    # intern=TRUE) does not yield error
     if (!verifyHasMongoCmd("mongoimport")) 
         stop("need system command mongoimport to be available")
     cmd = paste0(importCmd, " --host ", host, " --db ", dbname, " --collection ", 
         collectionName, " --type ", type, " --fields ", fields, "  --file ", path)
     cmd2args = c(" --host ", host, " --db ", dbname, " --collection ", collectionName, 
         " --type ", type, " --fields ", fields, "  --file ", path)
-    # chk = try(system(cmd, intern=TRUE))
     chk = try(system2(importCmd, args = cmd2args, stdout = TRUE))
     if (inherits(chk, "try-error")) 
         return(chk)
@@ -30,7 +27,7 @@
 #' @param path path to bed file (not compressed)
 #' @param collectionName name to use in mongodb
 #' @param bedType one of 'narrowPeak', 'broadPeak', 'chromHMM': contact developers for other types if desired
-#' @param dbname mongodb database name, used directly with system('mongoimort ...')
+#' @param dbname mongodb database name, used directly with system2('mongoimort ...')
 #' @param importCmd how to invoke 'mongoimport', default is to assume it can be found in PATH
 #' @param host host identifier for mongoimport, defaults to 127.0.0.1
 #' @examples

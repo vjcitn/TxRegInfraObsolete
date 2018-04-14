@@ -14,7 +14,7 @@ importBedToMongo(path, collectionName, bedType = "narrowPeak",
 
 \item{bedType}{one of 'narrowPeak', 'broadPeak', 'chromHMM': contact developers for other types if desired}
 
-\item{dbname}{mongodb database name, used directly with system('mongoimort ...')}
+\item{dbname}{mongodb database name, used directly with system2('mongoimort ...')}
 
 \item{importCmd}{how to invoke 'mongoimport', default is to assume it can be found in PATH}
 

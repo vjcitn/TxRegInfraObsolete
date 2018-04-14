@@ -11,8 +11,8 @@
 #' if (verifyHasMongoCmd()) txregCollections()[seq_len(5)]
 #' @export
 txregCollections = function(ignore = seq_len(3), url = URL_txregInAWS(), db = "txregnet") {
-    lis = system(sprintf("mongo %s/%s --eval 'db.getCollectionNames()'", url, db), 
-        intern = TRUE)
+    dbref = sprintf("%s/%s", url, db)
+    lis = system2("mongo", args=c(dbref, "--eval", "'db.getCollectionNames()'"), stdout = TRUE)
     rjson::fromJSON(paste0(lis[-c(ignore)], collapse = ""))
 }
 
