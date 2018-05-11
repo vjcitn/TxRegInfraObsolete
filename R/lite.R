@@ -227,13 +227,14 @@ makeGRConverterList = function(rme, map = basicCfieldsMap(), docTypeName = "type
 #' @return a RaggedExperiment instance
 #' @examples
 #' requireNamespace('mongolite')
-#' if (verifyHasMongoCmd()) {  # for makeColData
+#' if (verifyHasMongoCmd()) {  # for makeColData, which must be able to enumerate collections,
+#'                             # and thus must be able to run system (as opposed to mongolite function) 'mongo' 
 #'  m1 = mongolite::mongo(url=URL_txregInAWS(), db='txregnet')
 #'  cd = makeColData(url=URL_txregInAWS(), db='txregnet')
 #'  rme1 = RaggedMongoExpt(m1, cd[which(cd$type=='FP'),][seq_len(8),])
 #'  BiocParallel::register(BiocParallel::SerialParam())
 #'  ss = sbov(rme1, GRanges('chr1', IRanges(1e6, 1.5e6)))
-#' }
+#' } 
 #' @export
 sbov = function(rme, gr, map = basicCfieldsMap(), docTypeName = "type") {
     stopifnot(is(gr, "GRanges"), length(gr) == 1)

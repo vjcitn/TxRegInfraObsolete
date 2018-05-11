@@ -23,6 +23,7 @@ verifyRunningMongodb = function(url = "mongodb://127.0.0.1") {
 #' @export
 verifyHasMongoCmd = function(cmd = "mongo") {
     mcmd = try(system2(cmd, args = "--help", stdout = TRUE, stderr = TRUE))
+    if (inherits(mcmd, "try-error")) message("install mongodb on your system to use this function")
     !inherits(mcmd, "try-error")
 }
 
