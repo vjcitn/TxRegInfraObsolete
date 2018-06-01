@@ -11,6 +11,10 @@ ragged41FP
 \description{
 ragged41FP: A RaggedExperiment instance with digital genomic footprints over the coding region of ORMDL3
 }
+\note{
+The text on plot refers to FOS = 'footprint occupancy score'
+as in Neph et al, Nature 489, 6 Sept 2012 p 84.
+}
 \examples{
 data(ragged41FP)
 ragged41FP
@@ -23,7 +27,7 @@ image(ca,
 labs = gsub('_DS.*._hg19_FP', '', colnames(ragged41FP))
 axis(2, at=seq(0,1,length=41), ylab='41 tissues', 
     labels=labs, cex.axis=.6, las=2)
-mtext('positions on chr17 not to scale\\n(red = lower FOS = stronger binding capacity', 1, line=1)
+mtext('positions on chr17 not to scale\\n(red = lower FOS = stronger binding capacity)', 1, line=1)
 \dontrun{ # if (interactive()) {
   m1 = mongolite::mongo(url=URL_txregInAWS(), db='txregnet')
   cd = makeColData(url=URL_txregInAWS(), db='txregnet')
