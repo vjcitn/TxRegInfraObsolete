@@ -38,6 +38,6 @@ listAllCollections = function(url = "mongodb://127.0.0.1:27017", db = "test") {
     dbref = sprintf("%s/%s", url, db)
     lis = system2("mongo", c(dbref, "--eval", "'db.getCollectionNames()'"),
        stdout=TRUE)
-    rjson::fromJSON(paste0(lis[-c(seq_len(3))], collapse = ""))
+    rjson::fromJSON(paste0(lis[-c(seq_len(grep("\\[", lis)[1]-1))], collapse = ""))
 }
 

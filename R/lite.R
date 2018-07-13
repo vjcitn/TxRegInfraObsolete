@@ -3,17 +3,17 @@
 
 #' list collections in AWS mongo server for txregnet
 #' @import rjson
-#' @param ignore integer vector telling which lines of mongo db.getCollectionNames() result should be ignored
+#' @param ignore function evaluating to indices to be dropped in mongo response, defaulting to the indices of records preceding first occurrence of '['
 #' @param url a valid mongodb URL
 #' @param db character(1) db name
 #' @return a character vector of collection names
 #' @examples
 #' if (verifyHasMongoCmd()) txregCollections()[seq_len(5)]
 #' @export
-txregCollections = function(ignore = seq_len(3), url = URL_txregInAWS(), db = "txregnet") {
+txregCollections = function(ignore = function(x) seq_len(grep("\\[", x)[1]-1), url = URL_txregInAWS(), db = "txregnet") {
     dbref = sprintf("%s/%s", url, db)
     lis = system2("mongo", args=c(dbref, "--eval", "'db.getCollectionNames()'"), stdout = TRUE)
-    rjson::fromJSON(paste0(lis[-c(ignore)], collapse = ""))
+    rjson::fromJSON(paste0(lis[-ignore(lis)], collapse = ""))
 }
 
 #' get names of fields in a collection in remote txregnet
