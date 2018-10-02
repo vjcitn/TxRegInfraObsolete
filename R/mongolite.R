@@ -35,6 +35,7 @@ verifyHasMongoCmd = function(cmd = "mongo") {
 #' if (verifyHasMongoCmd()) listAllCollections()
 #' @export
 listAllCollections = function(url = "mongodb://127.0.0.1:27017", db = "test") {
+    url = gsub("test", db, url)
     #dbref = sprintf("%s/%s", url, db)
     lis = system2("mongo", c(url, "--eval", "'db.getCollectionNames()'"),
        stdout=TRUE)
