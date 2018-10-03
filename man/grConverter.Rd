@@ -4,8 +4,8 @@
 \alias{grConverter}
 \title{convert a GRanges to a JSON query for mongodb}
 \usage{
-grConverter(queryGRange, cfields = c(chrom = "chrom", start = "chromStart",
-  end = "chromEnd"))
+grConverter(queryGRange, cfields = c(chrom = "chrom", start =
+  "chromStart", end = "chromEnd"))
 }
 \arguments{
 \item{queryGRange}{a \code{\link[GenomicRanges]{GRanges-class}} instance of length 1}

@@ -3,17 +3,27 @@
 
 #' list collections in AWS mongo server for txregnet
 #' @import rjson
-#' @param ignore function evaluating to indices to be dropped in mongo response, defaulting to the indices of records preceding first occurrence of '['
+#' @param ignore NULL by default; otherwise an 
+#' integer vector telling which lines of mongo db.getCollectionNames() result should be ignored
 #' @param url a valid mongodb URL
 #' @param db character(1) db name
+#' @param cliparms character(1) arguments to 'mongo', defaults to '--quiet --eval'
 #' @return a character vector of collection names
+#' @note Different mongodb servers can have different response prologues.  The ignore
+#' parameter is there to bypass some of the initial text.  However, with the --quiet option
+#' this may not be needed.  We now search for "[" to start parsing the collection list output.
 #' @examples
 #' if (verifyHasMongoCmd()) txregCollections()[seq_len(5)]
 #' @export
-txregCollections = function(ignore = function(x) seq_len(grep("\\[", x)[1]-1), url = URL_txregInAWS(), db = "txregnet") {
-    dbref = sprintf("%s/%s", url, db)
-    lis = system2("mongo", args=c(dbref, "--eval", "'db.getCollectionNames()'"), stdout = TRUE)
-    rjson::fromJSON(paste0(lis[-ignore(lis)], collapse = ""))
+txregCollections = function(ignore = NULL, url = URL_txregInAWS(), db = "txregnet",
+       cliparms="--quiet --eval") {
+    url = gsub("test", db, url)
+    #dbref = sprintf("%s/%s", url, db)
+    lis = system2("mongo", args=c(url, cliparms, "'db.getCollectionNames()'"), stdout = TRUE)
+    if (!is.null(ignore)) lis = lis[-ignore]
+    cstart = grep("^\\[$", lis)
+    if (length(cstart)==0) stop("could not find '[' isolated in the response.")
+    rjson::fromJSON(paste0(lis[(cstart):length(lis)], collapse = ""))
 }
 
 #' get names of fields in a collection in remote txregnet

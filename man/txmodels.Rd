@@ -4,8 +4,8 @@
 \alias{txmodels}
 \title{use Gviz to render transcript models via GeneRegionTrack, but keep lightweight through requireNamespace and suggestion for installation}
 \usage{
-txmodels(sym, gr, edb = "EnsDb.Hsapiens.v75", plot.it = FALSE, radius = 0,
-  ...)
+txmodels(sym, gr, edb = "EnsDb.Hsapiens.v75", plot.it = FALSE,
+  radius = 0, ...)
 }
 \arguments{
 \item{sym}{a gene symbol to be looked up in biovizBase::genesymbol table}

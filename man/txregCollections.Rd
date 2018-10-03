@@ -4,21 +4,29 @@
 \alias{txregCollections}
 \title{list collections in AWS mongo server for txregnet}
 \usage{
-txregCollections(ignore = seq_len(3), url = URL_txregInAWS(),
-  db = "txregnet")
+txregCollections(ignore = NULL, url = URL_txregInAWS(),
+  db = "txregnet", cliparms = "--quiet --eval")
 }
 \arguments{
-\item{ignore}{integer vector telling which lines of mongo db.getCollectionNames() result should be ignored}
+\item{ignore}{NULL by default; otherwise an 
+integer vector telling which lines of mongo db.getCollectionNames() result should be ignored}
 
 \item{url}{a valid mongodb URL}
 
 \item{db}{character(1) db name}
+
+\item{cliparms}{character(1) arguments to 'mongo', defaults to '--quiet --eval'}
 }
 \value{
 a character vector of collection names
 }
 \description{
 list collections in AWS mongo server for txregnet
+}
+\note{
+Different mongodb servers can have different response prologues.  The ignore
+parameter is there to bypass some of the initial text.  However, with the --quiet option
+this may not be needed.  We now search for "[" to start parsing the collection list output.
 }
 \examples{
 if (verifyHasMongoCmd()) txregCollections()[seq_len(5)]
