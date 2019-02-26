@@ -32,7 +32,7 @@ verifyHasMongoCmd = function(cmd = "mongo") {
 #' @param db character(1) mongodb database name
 #' @return vector of strings
 #' @examples
-#' if (verifyHasMongoCmd()) listAllCollections()
+#' if (verifyRunningMongodb()) listAllCollections()
 #' @export
 listAllCollections = function(url = "mongodb://127.0.0.1:27017", db = "test") {
     url = gsub("test", db, url)

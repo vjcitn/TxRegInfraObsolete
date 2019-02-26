@@ -6,9 +6,9 @@ Description: This package provides interfaces to genomic metadata
 	DnaseI hypersensitivity sites and digital genomic footprints
 	are assembled using an out-of-memory extension of the 
 	RaggedExperiment API.
-Version: 1.3.0
+Version: 1.3.3
 Author: Vince Carey
-Depends: RaggedExperiment (>= 1.3.11), mongolite
+Depends: R (>= 3.5), RaggedExperiment (>= 1.3.11), mongolite
 Imports: methods, rjson, GenomicRanges, IRanges, BiocParallel,
 	GenomeInfoDb, S4Vectors, SummarizedExperiment, utils
 Suggests: knitr, GenomicFiles, EnsDb.Hsapiens.v75, testthat,
@@ -19,5 +19,5 @@ LazyLoad: yes
 LazyData: yes 
 biocViews: Network
 VignetteBuilder: knitr
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Encoding: UTF-8

@@ -3,7 +3,7 @@
 #' @examples
 #' URL_txregInAWS
 #' @export
-URL_txregInAWS = function() "mongodb+srv://user:user123@cluster1-ag7nd.mongodb.net/test"
+URL_txregInAWS = function() "mongodb+srv://user:user123@txregnet-kui9i.mongodb.net/txregnet"
 
 # #' return mongolite connection for working mongo server #' @param \dots passed
 # to mongo() #' @return an instance mongoliteCon of mongo from mongolite #' @note

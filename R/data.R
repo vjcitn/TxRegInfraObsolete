@@ -48,3 +48,11 @@
 #' }
 #' par(opar)
 "ragged41FP"
+#' oldbasicColData: metadata about a small collection of files for demonstrating TxRegInfra
+#' @importFrom utils data
+#' @docType data
+#' @format DataFrame from S4Vectors
+#' @examples
+#' data(oldbasicColData)
+#' head(oldbasicColData)
+"oldbasicColData"

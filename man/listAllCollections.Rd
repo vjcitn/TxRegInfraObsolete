@@ -18,5 +18,5 @@ vector of strings
 list all collections in a database, using command-line interface
 }
 \examples{
-if (verifyHasMongoCmd()) listAllCollections()
+if (verifyRunningMongodb()) listAllCollections()
 }
