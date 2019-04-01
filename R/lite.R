@@ -167,10 +167,10 @@ RaggedMongoExpt = function(con, colData) {
         names(initass) = rownames(colData)
     } else initass = GRangesList()
     ans = RaggedExperiment(initass)  #
-    colData(ans) = colData  #, colData=colData)
-    colnames(ans) = rownames(colData)
+    colData(ans) = cbind(colData(ans), colData)  #, colData=colData)
+#    colnames(ans) = rownames(colData) -> mergeROWS changes triggered error here 31 March 2019
     ans = new("RaggedMongoExpt", ans, con = con)
-    colData(ans) = colData
+    colData(ans) = cbind(colData(ans), colData)
     ans
 }
 #' determine the fields present in a txregnet document

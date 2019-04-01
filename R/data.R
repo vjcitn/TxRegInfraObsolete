@@ -56,3 +56,10 @@
 #' data(oldbasicColData)
 #' head(oldbasicColData)
 "oldbasicColData"
+#' metadata about DNaseI hotspots from ENCODE
+#' @docType data
+#' @format data.frame
+#' @examples
+#' data(dnmeta)
+#' head(dnmeta[,1:10])
+"dnmeta"
