@@ -30,15 +30,20 @@ verifyHasMongoCmd = function(cmd = "mongo") {
 #' list all collections in a database, using command-line interface
 #' @param url character(1) mongodb URL
 #' @param db character(1) mongodb database name
+#' @param lisproc a function that processes the reply to 'mongo ... --eval 'db.getCollectionNames()' to extract JSON, defaults to a function that
+#' removes all (header) records up to the one containing 'MongoDB server'
 #' @return vector of strings
 #' @examples
 #' if (verifyRunningMongodb()) listAllCollections()
 #' @export
-listAllCollections = function(url = "mongodb://127.0.0.1:27017", db = "test") {
+listAllCollections = function(url = "mongodb://127.0.0.1:27017", 
+   db = "test", 
+   lisproc=function(x) {ind = grep("MongoDB server", x)[1]; x[-seq_len(ind)]}) {
     url = gsub("test", db, url)
     #dbref = sprintf("%s/%s", url, db)
     lis = system2("mongo", c(url, "--eval", "'db.getCollectionNames()'"),
        stdout=TRUE)
-    rjson::fromJSON(paste0(lis[-c(seq_len(3))], collapse = ""))
+    if (!is.null(lisproc)) lis = lisproc(lis)
+    rjson::fromJSON(paste(lis, collapse = ""))
 }
 

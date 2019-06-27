@@ -4,12 +4,17 @@
 \alias{listAllCollections}
 \title{list all collections in a database, using command-line interface}
 \usage{
-listAllCollections(url = "mongodb://127.0.0.1:27017", db = "test")
+listAllCollections(url = "mongodb://127.0.0.1:27017", db = "test",
+  lisproc = function(x) {     ind = grep("MongoDB server", x)[1]    
+  x[-seq_len(ind)] })
 }
 \arguments{
 \item{url}{character(1) mongodb URL}
 
 \item{db}{character(1) mongodb database name}
+
+\item{lisproc}{a function that processes the reply to 'mongo ... --eval 'db.getCollectionNames()' to extract JSON, defaults to a function that
+removes all (header) records up to the one containing 'MongoDB server'}
 }
 \value{
 vector of strings
