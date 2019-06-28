@@ -4,7 +4,8 @@
 \alias{sbov}
 \title{prototype of subsetter for mongo resource}
 \usage{
-sbov(rme, gr, map = basicCfieldsMap(), docTypeName = "type")
+sbov(rme, gr, map = basicCfieldsMap(), docTypeName = "type",
+  simplify = TRUE)
 }
 \arguments{
 \item{rme}{RaggedMongoExpt instance}
@@ -14,12 +15,21 @@ sbov(rme, gr, map = basicCfieldsMap(), docTypeName = "type")
 \item{map}{list with one element per document type telling what fields are chr, start, stop}
 
 \item{docTypeName}{character(1) naming column of colData(rme) that has document type}
+
+\item{simplify}{logical(1) if TRUE, a GRanges is assembled; if FALSE,
+a RaggedExperiment is returned}
 }
 \value{
-a RaggedExperiment instance
+if simplify is TRUE (the default), a GRanges is returned with assay components in the mcols; otherwise a RaggedExperiment instance, with metadata component 'docType' set to propagate the input type
 }
 \description{
 prototype of subsetter for mongo resource
+}
+\note{
+This is a placeholder for a proper subsetByOverlaps method.  While
+it would appear sensible to allow subsetting for diverse assay types
+(e.g., eQTL, DGF), in version 1.5.x this is not supported.  Each
+call can operate on only one sample type.
 }
 \examples{
 requireNamespace('mongolite')
@@ -30,6 +40,8 @@ if (verifyHasMongoCmd()) {  # for makeColData, which must be able to enumerate c
  cd = TxRegInfra::basicColData
  rme1 = RaggedMongoExpt(m1, cd[which(cd$type=='FP'),][seq_len(8),])
  BiocParallel::register(BiocParallel::SerialParam())
+ qrng = GRanges('chr1', IRanges(1e6, 1.5e6))
+ GenomeInfoDb::genome(qrng) = "hg19"
  ss = sbov(rme1, GRanges('chr1', IRanges(1e6, 1.5e6)))
 } 
 }

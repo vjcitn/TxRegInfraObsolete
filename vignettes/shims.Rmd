@@ -1,0 +1,87 @@
+---
+title: "shims in TxRegInfra: dealing with heterogeneous annotation native to different genomic assay archives"
+author: "Vincent J. Carey, stvjc at channing.harvard.edu"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{shims in TxRegInfra}
+  %\VignetteEncoding{UTF-8}
+output:
+  BiocStyle::html_document:
+    highlight: pygments
+    number_sections: yes
+    theme: united
+    toc: yes
+---
+
+```{r setup, echo=FALSE, results="hide"}
+library(TxRegInfra)
+```
+
+# Overview
+
+In home maintenance, shims are little wedges of wood that you
+stick into wobbly entities to make them more stable.
+
+We need things like this to deal with diverse data resources
+in genomics.  Here's an example of the problem:
+
+```{r lkshi}
+cm = TxRegInfra:::basicCfieldsMap()
+cmdf = as.data.frame(cm)
+names(cmdf) = names(cm)
+cmdf
+```
+
+The rownames of this data frame are target annotation terms for
+features of GRanges: chrom, start, end.  The columns are different assay types.
+Entry i,j is the notation for feature i on assay type j.  Thus for
+eQTL data the start and end can be determined from the source
+attribute 'snp_pos', while for footprints (FP) the footprint end is denoted 'end'
+and for hotspots (HS) the footprint end is denoted 'chromEnd'.
+
+In order to leave data in its original state but simplify
+downstream integration, we use shims like `basicCfieldsMap` to
+map attribute names to a common vocabulary.
+
+# Application to RaggedMongoExpt instances
+
+We use `RaggedMongoExpt` instances to work with contents of
+a remote MongoDB that holds large volumes of genomic annotation.
+
+```{r makecon}
+con1 = mongo(url=URL_txregInAWS(), db="txregnet")
+cd = TxRegInfra::basicColData
+rme0 = RaggedMongoExpt(con1, colData=cd)
+rme0
+```
+
+Here `rme0` holds a reference to a MongoDB database, coordinated
+with the `colData` component.  (The package includes
+a unit test for correspondence between collection names in the
+txregnet database and the colData element names.)
+
+At present, the main workhorse for retrieving assay
+results from `r class(rme0)` instances is `sbov`, which
+is an approach to a `subsetByOverlaps` functionality.
+We'll illustrate this with extractions from lung-related
+eQTL, Dnase hotspot, and digital genomic footprinting
+results.
+
+```{r dosb}
+lname_eqtl = "Lung_allpairs_v7_eQTL"
+lname_dhs = "ENCFF001SSA_hg19_HS" # see dnmeta
+lname_fp = "fLung_DS14724_hg19_FP"
+si17 = GenomeInfoDb::Seqinfo(genome="hg19")["chr17"]
+si17n = si17
+GenomeInfoDb::seqlevelsStyle(si17n) = "NCBI"
+s1 = sbov(rme0[,lname_eqtl], GRanges("17", IRanges(38.06e6, 38.15e6),
+    seqinfo=si17n))
+s2 = sbov(rme0[,lname_dhs], GRanges("chr17", IRanges(38.06e6, 38.15e6),
+   seqinfo=si17))
+s3 = sbov(rme0[,lname_fp], GRanges("chr17", IRanges(38.06e6, 38.15e6),
+   seqinfo=si17))
+```
+
+Note that we need different seqnames for the different modalities;
+the eQTL data are recorded with NCBI-like chromosome identifiers.

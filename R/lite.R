@@ -227,6 +227,18 @@ makeGRConverterList = function(rme, map = basicCfieldsMap(), docTypeName = "type
     ans
 }
 
+simplify_sbov = function(x) {
+ DF = DataFrame(as.list(assays(x)))
+ names(DF) = names(assays(x))
+ rownames(DF) = NULL
+ myr = rowRanges(x)
+ mcols(myr) = DF
+ metadata(myr) = metadata(x)
+ mcols(myr)$origin = colnames(x)
+ myr
+}
+
+
 #' prototype of subsetter for mongo resource
 #' @importFrom BiocParallel bplapply
 #' @importFrom S4Vectors 'mcols<-' tail DataFrame
@@ -234,7 +246,13 @@ makeGRConverterList = function(rme, map = basicCfieldsMap(), docTypeName = "type
 #' @param gr GRanges instance to subset by
 #' @param map list with one element per document type telling what fields are chr, start, stop
 #' @param docTypeName character(1) naming column of colData(rme) that has document type
-#' @return a RaggedExperiment instance
+#' @param simplify logical(1) if TRUE, a GRanges is assembled; if FALSE,
+#' a RaggedExperiment is returned 
+#' @note This is a placeholder for a proper subsetByOverlaps method.  While
+#' it would appear sensible to allow subsetting for diverse assay types
+#' (e.g., eQTL, DGF), in version 1.5.x this is not supported.  Each
+#' call can operate on only one sample type.
+#' @return if simplify is TRUE (the default), a GRanges is returned with assay components in the mcols; otherwise a RaggedExperiment instance, with metadata component 'docType' set to propagate the input type
 #' @examples
 #' requireNamespace('mongolite')
 #' if (verifyHasMongoCmd()) {  # for makeColData, which must be able to enumerate collections,
@@ -244,11 +262,17 @@ makeGRConverterList = function(rme, map = basicCfieldsMap(), docTypeName = "type
 #'  cd = TxRegInfra::basicColData
 #'  rme1 = RaggedMongoExpt(m1, cd[which(cd$type=='FP'),][seq_len(8),])
 #'  BiocParallel::register(BiocParallel::SerialParam())
+#'  qrng = GRanges('chr1', IRanges(1e6, 1.5e6))
+#'  GenomeInfoDb::genome(qrng) = "hg19"
 #'  ss = sbov(rme1, GRanges('chr1', IRanges(1e6, 1.5e6)))
 #' } 
 #' @export
-sbov = function(rme, gr, map = basicCfieldsMap(), docTypeName = "type") {
+sbov = function(rme, gr, map = basicCfieldsMap(), docTypeName = "type",
+   simplify=TRUE) {
     stopifnot(is(gr, "GRanges"), length(gr) == 1)
+    typecol = colData(rme)[[docTypeName]]
+    stopifnot(length(unique(typecol))==1)
+    if (is.na(GenomeInfoDb::genome(gr)[1])) warning("genome is not set for for query GRanges")
     meta = parent.env(rme@con)$orig
     theurl = meta$url
     thedb = meta$db
@@ -280,6 +304,10 @@ sbov = function(rme, gr, map = basicCfieldsMap(), docTypeName = "type") {
         cd = cd[-dr, ]
     }
     names(content) = rownames(cd)
-    RaggedExperiment(assay = GRangesList(content), colData = cd)
+    ans = RaggedExperiment(assay = GRangesList(content), colData = cd)
+    GenomeInfoDb::seqinfo(ans) = GenomeInfoDb::seqinfo(gr)
+    metadata(ans)$docType = typecol[1]
+    if (simplify) return(simplify_sbov(ans))
+    ans
 }
 
