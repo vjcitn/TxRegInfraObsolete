@@ -42,6 +42,6 @@ if (verifyHasMongoCmd()) {  # for makeColData, which must be able to enumerate c
  BiocParallel::register(BiocParallel::SerialParam())
  qrng = GRanges('chr1', IRanges(1e6, 1.5e6))
  GenomeInfoDb::genome(qrng) = "hg19"
- ss = sbov(rme1, GRanges('chr1', IRanges(1e6, 1.5e6)))
+ ss = sbov(rme1, GRanges('chr1', IRanges(1e6, 1.5e6)), simplify=FALSE)
 } 
 }

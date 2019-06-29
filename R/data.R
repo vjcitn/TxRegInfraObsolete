@@ -63,3 +63,10 @@
 #' data(dnmeta)
 #' head(dnmeta[,1:10])
 "dnmeta"
+
+#' a GRanges instance with eQTL metadata returned by `sbov`
+#' @docType data
+#' @format a GRanges instance
+#' @examples
+#' names(mcols(demo_eQTL_granges))
+"demo_eQTL_granges"

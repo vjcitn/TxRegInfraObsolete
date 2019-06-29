@@ -264,7 +264,7 @@ simplify_sbov = function(x) {
 #'  BiocParallel::register(BiocParallel::SerialParam())
 #'  qrng = GRanges('chr1', IRanges(1e6, 1.5e6))
 #'  GenomeInfoDb::genome(qrng) = "hg19"
-#'  ss = sbov(rme1, GRanges('chr1', IRanges(1e6, 1.5e6)))
+#'  ss = sbov(rme1, GRanges('chr1', IRanges(1e6, 1.5e6)), simplify=FALSE)
 #' } 
 #' @export
 sbov = function(rme, gr, map = basicCfieldsMap(), docTypeName = "type",
@@ -309,5 +309,19 @@ sbov = function(rme, gr, map = basicCfieldsMap(), docTypeName = "type",
     metadata(ans)$docType = typecol[1]
     if (simplify) return(simplify_sbov(ans))
     ans
+}
+
+#' add gene symbols to a GRanges that uses ensembl identifiers
+#' @param x a GRanges assumed to have mcols element `gene_id` with ensembl gene identifiers
+#' @param EnsDb an instance of EnsDb
+#' @note At this time no checking of reference genome consistency is performed.
+#' @return a GRanges with mcols column 'symbol'
+#' @examples
+#' 
+addsyms = function(x, EnsDb=EnsDb.Hsapiens.v75::EnsDb.Hsapiens.v75) {
+  ensids = gsub("\\..*", "", x$gene_id) # remove post period
+  gns = genes(EnsDb)
+  x$symbol = gns[ensids]$symbol
+  x
 }
 

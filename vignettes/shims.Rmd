@@ -49,6 +49,8 @@ map attribute names to a common vocabulary.
 We use `RaggedMongoExpt` instances to work with contents of
 a remote MongoDB that holds large volumes of genomic annotation.
 
+## Construction
+
 ```{r makecon}
 con1 = mongo(url=URL_txregInAWS(), db="txregnet")
 cd = TxRegInfra::basicColData
@@ -60,6 +62,30 @@ Here `rme0` holds a reference to a MongoDB database, coordinated
 with the `colData` component.  (The package includes
 a unit test for correspondence between collection names in the
 txregnet database and the colData element names.)
+
+## Basic motivation
+
+We'll step back for a moment to give a sense of basic
+motivations.  We want to use MongoDB to manage data about
+eQTL, DnaseI hypersensitive regions and so forth, without
+curating the related file contents.  Here's an
+illustration of the basic functionality for eQTL:
+
+```{r lkcon1}
+mycon = mongo(db="txregnet", 
+   url=URL_txregInAWS(),   # ATLAS deployment in AWS
+   collection="Lung_allpairs_v7_eQTL")
+mycon$find(q=rjson::toJSON(list(chr=17)), limit=2)
+```
+
+We'll need different `q` components for assays of different
+types, because the internal notation used for chromosomes
+differs between the assay types.  Other aspects of diversified
+annotation can emerge, and the shim concept helps deliver
+to the user a more unified interface in the face of
+this diversity.
+
+## The `sbov` function
 
 At present, the main workhorse for retrieving assay
 results from `r class(rme0)` instances is `sbov`, which
@@ -83,5 +109,9 @@ s3 = sbov(rme0[,lname_fp], GRanges("chr17", IRanges(38.06e6, 38.15e6),
    seqinfo=si17))
 ```
 
-Note that we need different seqnames for the different modalities;
-the eQTL data are recorded with NCBI-like chromosome identifiers.
+In principle we could avoid the `seqlevelsStyle` manipulation
+by checking assay type within `sbov`, but at the moment the
+user must shoulder this responsibility.
+
+To see more about how to work with `sbov` outputs, check the main
+vignette.
