@@ -70,3 +70,24 @@
 #' @examples
 #' names(mcols(demo_eQTL_granges))
 "demo_eQTL_granges"
+
+#' a GRanges instance with DnaseI hotspot metadata returned by `sbov`
+#' @docType data
+#' @format a GRanges instance
+#' @examples
+#' head(sbov_output_HS)
+"sbov_output_HS"
+
+#' a GRanges instance with digital genomic footprint metadata returned by `sbov`
+#' @docType data
+#' @format a GRanges instance
+#' @examples
+#' head(sbov_output_FP)
+"sbov_output_FP"
+
+#' a GRanges instance with eQTL metadata returned by `sbov`
+#' @docType data
+#' @format a GRanges instance
+#' @examples
+#' head(sbov_output_eQTL)
+"sbov_output_eQTL"

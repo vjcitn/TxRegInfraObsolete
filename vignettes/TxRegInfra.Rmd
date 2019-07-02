@@ -223,27 +223,60 @@ UnstitchedGPos object with 265 positions and 2 metadata columns:
 
 ## A bipartite graph for eQTL-gene relationships
 
-```{r dogr}
+The object `s1` computed above is available as
+`demo_eQTL_granges`.  We convert it to a graph via
+```{r lkgr}
 library(graph)
-s1$variant_id = as.character(s1$variant_id)
-allg = unique(s1$symbol)
-alls = unique(as.character(s1$variant_id))
-g1 = new("graphNEL", edgemode="directed")
-g1 = addNode(c(allg, alls), g1)
-for (i in 1:length(s1)) {
-  g1 = addEdge(s1[i]$variant_id, s1[i]$symbol, g1)
-}
-edgeDataDefaults(g1, "qvalue") = NA
-edgeDataDefaults(g1, "slope") = NA
-for (i in 1:length(s1)) {
-  edgeData(g1, s1[i]$variant_id, s1[i]$symbol, "qvalue") = s1[i]$qvalue
-  edgeData(g1, s1[i]$variant_id, s1[i]$symbol, "slope") = s1[i]$slope
-  }
+g1 = sbov_to_graphNEL(demo_eQTL_granges)
 g1
 ```
+Nodes are SNPs and genes, edges are present when
+the resource (in this case the GTEx lung study)
+declares an association (in this case, an FDR for
+SNP-gene association not exceeding 0.10.)  The
+`r Biocpkg("graph")` library includes functions
+for creation of incidence matrices from graphs, and
+vice versa.
 
+## Connecting eQTL-SNPs via DHS and DGF
 
+Given the GRanges representations for `sbov` results,
+we can use overlap computations to conveniently
+identify relationships between eQTL SNPs, genes,
+and hypersensitivity or footprint regions.
 
+We use `sbov_output_HS` as a persistent instance of
+`s2` computed above.
+
+```{r doov}
+seqlevelsStyle(demo_eQTL_granges) = "UCSC"
+fo1 = findOverlaps(demo_eQTL_granges, sbov_output_HS)
+fo1 
+eq_by_hs = split(demo_eQTL_granges[queryHits(fo1)],
+   subjectHits(fo1))
+eq_by_hs
+```
+
+This shows that there are two DHS sites that overlap
+with SNPs showing eQTL associations with various genes.
+
+For the footprint data, we have:
+```{r doov2}
+fo2 = findOverlaps(demo_eQTL_granges, sbov_output_FP)
+fo2 
+eq_by_fp = split(demo_eQTL_granges[queryHits(fo2)],
+   subjectHits(fo2))
+eq_by_fp
+```
+
+## Relationships to FIMO-based TFBS
+
+We have a small number of cloud-resident FIMO search
+results through the `r Biocpkg("TFutils")` package.
+
+```{r dotfs}
+library(TFutils)
+```
 
 
 

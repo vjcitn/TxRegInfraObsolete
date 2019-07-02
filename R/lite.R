@@ -149,7 +149,7 @@ setOldClass("mongo")
 #' @importClassesFrom RaggedExperiment RaggedExperiment
 #' @importFrom RaggedExperiment RaggedExperiment
 #' @importFrom GenomicRanges GRangesList
-#' @importFrom SummarizedExperiment colData 'colData<-'
+#' @importFrom SummarizedExperiment colData 'colData<-' 'metadata<-' mcols assays rowRanges
 setClass("RaggedMongoExpt", representation(con = "mongo"), contains = "RaggedExperiment")
 
 #' bind colData to a mongo-based ragged-experiment incubator
@@ -241,7 +241,7 @@ simplify_sbov = function(x) {
 
 #' prototype of subsetter for mongo resource
 #' @importFrom BiocParallel bplapply
-#' @importFrom S4Vectors 'mcols<-' tail DataFrame
+#' @importFrom S4Vectors 'mcols<-' tail DataFrame metadata
 #' @param rme RaggedMongoExpt instance
 #' @param gr GRanges instance to subset by
 #' @param map list with one element per document type telling what fields are chr, start, stop
