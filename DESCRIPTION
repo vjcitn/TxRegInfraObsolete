@@ -13,7 +13,7 @@ Imports: methods, rjson, GenomicRanges, IRanges, BiocParallel,
 	GenomeInfoDb, S4Vectors, SummarizedExperiment, utils
 Suggests: knitr, GenomicFiles, EnsDb.Hsapiens.v75, testthat, shiny,
 	biovizBase (>= 1.27.2), Gviz, AnnotationFilter, ensembldb,
-	ontoProc, rjson, graph
+	ontoProc, rjson, graph, TFutils (>= 1.5.4)
 Maintainer: VJ Carey <stvjc@channing.harvard.edu>
 License: Artistic-2.0
 LazyLoad: yes 

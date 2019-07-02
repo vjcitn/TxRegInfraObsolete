@@ -18,6 +18,7 @@ output:
 suppressPackageStartupMessages({
 library(TxRegInfra)
 library(GenomicFiles)
+library(TFutils)
 })
 ```
 
@@ -276,6 +277,10 @@ results through the `r Biocpkg("TFutils")` package.
 
 ```{r dotfs}
 library(TFutils)
+data(demo_fimo_granges)
+seqlevelsStyle(demo_eQTL_granges) = "UCSC"
+lapply(demo_fimo_granges, lapply, function(x) 
+   subsetByOverlaps(demo_eQTL_granges, x))
 ```
 
 

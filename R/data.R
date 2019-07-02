@@ -91,3 +91,10 @@
 #' @examples
 #' head(sbov_output_eQTL)
 "sbov_output_eQTL"
+
+#' a list of GRanges instances with TF FIMO scores returned by `fimo_granges`
+#' @docType data
+#' @format a list of GRanges instances
+#' @examples
+#' names(mcols(demo_fimo_granges))
+"demo_fimo_granges"
